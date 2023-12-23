@@ -1960,7 +1960,7 @@ namespace Ched.UI
                     foreach (var item in ScoreEvents.HighSpeedChangeEvents.Where(p => p.Tick >= HeadTick && p.Tick < tailTick))
                     {
                         var point = new PointF(rightBase + strSize.Width * 2, -GetYPositionFromTick(item.Tick) - strSize.Height);
-                        pe.Graphics.DrawString(string.Format("x{0: 0.00;-0.00}", item.SpeedRatio), font, highSpeedBrush, point);
+                        pe.Graphics.DrawString(string.Format("x{0: 0.00000;-0.00000}", item.SpeedRatio), font, highSpeedBrush, point);
                     }
                 }
             }

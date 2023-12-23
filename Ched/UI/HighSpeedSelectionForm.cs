@@ -33,7 +33,7 @@ namespace Ched.UI
             speedRatioBox.Minimum = -10000m;
             speedRatioBox.Maximum = 10000m;
             speedRatioBox.Increment = 0.01m;
-            speedRatioBox.DecimalPlaces = 2;
+            speedRatioBox.DecimalPlaces = 5;
             speedRatioBox.Value = 1;
         }
     }
