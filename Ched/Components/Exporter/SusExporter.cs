@@ -93,7 +93,18 @@ namespace Ched.Components.Exporter
                     var barPos = BarIndexCalculator.GetBarPositionFromTick(p.Tick);
                     return string.Format("{0}'{1}:{2}", barPos.BarIndex + (p.Tick == 0 ? 0 : BarIndexOffset), barPos.TickOffset, p.SpeedRatio.ToString(CultureInfo.InvariantCulture));
                 });
+                var splitLine = book.Score.Events.SplitLineChangeEvents.Select(p =>
+                {
+                    var barPos = BarIndexCalculator.GetBarPositionFromTick(p.Tick);
+                    return string.Format("{0}'{1}:{2}.{3}", 
+                        barPos.BarIndex + (p.Tick == 0 ? 0 : BarIndexOffset), 
+                        barPos.TickOffset, 
+                        p.LineNumber.ToString(),
+                        p.LineStyle.ToString()
+                    );
+                });
                 writer.WriteLine("#TIL00: \"{0}\"", string.Join(", ", speeds));
+                writer.WriteLine("#TIL01: \"{0}\"", string.Join(", ", splitLine));
                 writer.WriteLine("#HISPEED 00");
                 writer.WriteLine("#MEASUREHS 00");
                 writer.WriteLine();

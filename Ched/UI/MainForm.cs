@@ -624,6 +624,23 @@ namespace Ched.UI
                 };
                 UpdateEvent(NoteView.ScoreEvents.HighSpeedChangeEvents, item);
             });
+            commandSource.RegisterCommand(Commands.InsertSplitLineChange, MainFormStrings.SplitLine, () =>
+            {
+                var form = new SplitLineSelectionForm()
+                {
+                    LineNumber = NoteView.ScoreEvents.SplitLineChangeEvents.OrderBy(p => p.Tick).LastOrDefault(p => p.Tick <= NoteView.CurrentTick)?.LineNumber ?? 1.0m,
+                    LineStyle = NoteView.ScoreEvents.SplitLineChangeEvents.OrderBy(p => p.Tick).LastOrDefault(p => p.Tick <= NoteView.CurrentTick)?.LineStyle ?? 1.0m
+                };
+                if (form.ShowDialog(this) != DialogResult.OK) return;
+
+                var item = new SplitLineChangeEvent()
+                {
+                    Tick = NoteView.CurrentTick,
+                    LineNumber = (int)form.LineNumber,
+                    LineStyle = (int)form.LineStyle
+                };
+                UpdateEvent(NoteView.ScoreEvents.SplitLineChangeEvents, item);
+            });
             commandSource.RegisterCommand(Commands.InsertTimeSignatureChange, MainFormStrings.TimeSignature, () =>
             {
                 var form = new TimeSignatureSelectionForm();
@@ -917,9 +934,10 @@ namespace Ched.UI
 
             var insertBpmItem = shortcutItemBuilder.BuildItem(Commands.InsertBpmChange, "BPM");
             var insertHighSpeedItem = shortcutItemBuilder.BuildItem(Commands.InsertHighSpeedChange, MainFormStrings.HighSpeed);
+            var insertSplitLineItem = shortcutItemBuilder.BuildItem(Commands.InsertSplitLineChange, MainFormStrings.SplitLine);
             var insertTimeSignatureItem = shortcutItemBuilder.BuildItem(Commands.InsertTimeSignatureChange, MainFormStrings.TimeSignature);
 
-            var insertMenuItems = new ToolStripItem[] { insertBpmItem, insertHighSpeedItem, insertTimeSignatureItem };
+            var insertMenuItems = new ToolStripItem[] { insertBpmItem, insertHighSpeedItem, insertSplitLineItem, insertTimeSignatureItem };
 
             var isAbortAtLastNoteItem = new ToolStripMenuItem(MainFormStrings.AbortAtLastNote, null, (s, e) =>
             {

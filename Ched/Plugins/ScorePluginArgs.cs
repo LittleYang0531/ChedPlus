@@ -32,6 +32,7 @@ namespace Ched.Plugins
             CheckEventDuplicate(score.Events.BpmChangeEvents);
             CheckEventDuplicate(score.Events.TimeSignatureChangeEvents);
             CheckEventDuplicate(score.Events.HighSpeedChangeEvents);
+            CheckEventDuplicate(score.Events.SplitLineChangeEvents);
             updateScoreAction(score);
         }
 

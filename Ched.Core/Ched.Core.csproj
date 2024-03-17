@@ -76,6 +76,7 @@
     <Compile Include="EventCollection.cs" />
     <Compile Include="Events\BpmChangeEvent.cs" />
     <Compile Include="Events\EventBase.cs" />
+    <Compile Include="Events\SplitLineChangeEvent.cs" />
     <Compile Include="Events\HighSpeedChangeEvent.cs" />
     <Compile Include="Events\InvalidTimeSignatureException.cs" />
     <Compile Include="Events\TimeSignatureChangeEvent.cs" />

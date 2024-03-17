@@ -338,6 +338,12 @@ namespace Ched.Localization {
                 return ResourceManager.GetString("HighSpeed", resourceCulture);
             }
         }
+
+        public static string SplitLine {
+            get {
+                return ResourceManager.GetString("SplitLine", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to インポート.

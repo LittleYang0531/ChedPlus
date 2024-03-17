@@ -159,7 +159,10 @@
   <data name="HighSpeed" xml:space="preserve">
     <value>HiSpeed</value>
   </data>
-  <data name="InsertMenu" xml:space="preserve">
+  <data name="SplitLine" xml:space="preserve">
+    <value>分裂线</value>
+  </data>
+	<data name="InsertMenu" xml:space="preserve">
     <value>插入(&amp;I)</value>
   </data>
   <data name="NewFile" xml:space="preserve">

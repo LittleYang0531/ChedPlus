@@ -253,6 +253,12 @@
     <Compile Include="UI\HighSpeedSelectionForm.Designer.cs">
       <DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
     </Compile>
+	<Compile Include="UI\SplitLineSelectionForm.cs">
+		<SubType>Form</SubType>
+	</Compile>
+	<Compile Include="UI\SplitLineSelectionForm.Designer.cs">
+		<DependentUpon>SplitLineSelectionForm.cs</DependentUpon>
+	</Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -331,6 +337,7 @@
     <EmbeddedResource Include="Localization\MainFormStrings.en.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MainFormStrings.en.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Localization\MainFormStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -380,15 +387,24 @@
     <EmbeddedResource Include="UI\CustomQuantizeSelectionForm.zh.resx">
       <DependentUpon>CustomQuantizeSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\HighSpeedSelectionForm.en.resx">
-      <DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\HighSpeedSelectionForm.resx">
-      <DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\HighSpeedSelectionForm.zh.resx">
-      <DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
-    </EmbeddedResource>
+	<EmbeddedResource Include="UI\HighSpeedSelectionForm.en.resx">
+		<DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UI\HighSpeedSelectionForm.resx">
+		<DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UI\HighSpeedSelectionForm.zh.resx">
+		<DependentUpon>HighSpeedSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UI\SplitLineSelectionForm.en.resx">
+		<DependentUpon>SplitLineSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UI\SplitLineSelectionForm.resx">
+		<DependentUpon>SplitLineSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="UI\SplitLineSelectionForm.zh.resx">
+		<DependentUpon>SplitLineSelectionForm.cs</DependentUpon>
+	</EmbeddedResource>
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

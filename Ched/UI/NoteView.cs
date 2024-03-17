@@ -1907,6 +1907,7 @@ namespace Ched.UI
             using (var font = new Font("MS Gothic", 8))
             {
                 SizeF strSize = pe.Graphics.MeasureString("000", font);
+                SizeF hiSize = pe.Graphics.MeasureString("x 0.00000", font);
 
                 // 小節番号描画
                 int barTick = UnitBeatTick * 4;
@@ -1961,6 +1962,16 @@ namespace Ched.UI
                     {
                         var point = new PointF(rightBase + strSize.Width * 2, -GetYPositionFromTick(item.Tick) - strSize.Height);
                         pe.Graphics.DrawString(string.Format("x{0: 0.00000;-0.00000}", item.SpeedRatio), font, highSpeedBrush, point);
+                    }
+                }
+
+                // 分裂线描画
+                using (var splitLineBrush = new SolidBrush(Color.FromArgb(96, 96, 216)))
+                {
+                    foreach (var item in ScoreEvents.SplitLineChangeEvents.Where(p => p.Tick >= HeadTick && p.Tick < tailTick))
+                    {
+                        var point = new PointF(rightBase + strSize.Width * 2 + hiSize.Width, -GetYPositionFromTick(item.Tick) - strSize.Height);
+                        pe.Graphics.DrawString(string.Format("{0:+ 0;- 0}:{1: 0;-0}", item.LineNumber, item.LineStyle), font, splitLineBrush, point);
                     }
                 }
             }
@@ -2276,6 +2287,11 @@ namespace Ched.UI
             var speedOp = events.HighSpeedChangeEvents.Where(p => isContained(p)).ToList().Select(p =>
             {
                 return new RemoveEventOperation<HighSpeedChangeEvent>(events.HighSpeedChangeEvents, p);
+            });
+
+            var splitOp = events.SplitLineChangeEvents.Where(p => isContained(p)).ToList().Select(p =>
+            {
+                return new RemoveEventOperation<SplitLineChangeEvent>(events.SplitLineChangeEvents, p);
             });
 
             var signatureOp = events.TimeSignatureChangeEvents.Where(p => isContained(p)).ToList().Select(p =>

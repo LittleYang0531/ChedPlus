@@ -144,35 +144,77 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
-  <data name="speedRatioBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>72, 20</value>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 62</value>
   </data>
-  <data name="speedRatioBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 21</value>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
-  <data name="speedRatioBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;speedRatioBox.Name" xml:space="preserve">
-    <value>speedRatioBox</value>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
   </data>
-  <data name="&gt;&gt;speedRatioBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;speedRatioBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;speedRatioBox.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="lineNumberBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 20</value>
+  </data>
+  <data name="lineNumberBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 21</value>
+  </data>
+  <data name="lineNumberBox.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lineNumberBox.Name" xml:space="preserve">
+    <value>lineNumberBox</value>
+  </data>
+  <data name="&gt;&gt;lineNumberBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lineNumberBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lineNumberBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lineStyleBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>83, 60</value>
+  </data>
+  <data name="lineStyleBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 21</value>
+  </data>
+  <data name="lineStyleBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lineStyleBox.Name" xml:space="preserve">
+    <value>lineStyleBox</value>
+  </data>
+  <data name="&gt;&gt;lineStyleBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lineStyleBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lineStyleBox.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="buttonOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>62, 61</value>
+    <value>62, 98</value>
   </data>
   <data name="buttonOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -193,13 +235,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="buttonCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>143, 61</value>
+    <value>143, 98</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -220,7 +262,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -229,13 +271,13 @@
     <value>6, 12</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>230, 96</value>
+    <value>230, 133</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>ハイスピード速度指定</value>
+    <value>スプリット指定</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>HighSpeedSelectionForm</value>
+    <value>SplitLineSelectionForm</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

@@ -159,6 +159,9 @@
   <data name="HighSpeed" xml:space="preserve">
     <value>High Speed Selection</value>
   </data>
+  <data name="SplitLine" xml:space="preserve">
+    <value>Split Line Selection</value>
+  </data>
   <data name="InsertMenu" xml:space="preserve">
     <value>Insert(&amp;I)</value>
   </data>
