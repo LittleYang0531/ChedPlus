@@ -1,5 +1,11 @@
 # ChedPlus
 
+[Ched](https://github.com/4yn/Ched) designed for World Dai Star(Stellarity). Respect [@paralleltree](https://twitter.com/paralleltree) and [@4yn](https://github.com/4yn). Download [here](https://github.com/LittleYang0531/ChedPlus/releases)
+
+- Added Split Line Event
+
+# Original ChedPlus Readme
+
 [Ched](https://github.com/paralleltree/Ched) with extra features. Respect [@paralleltree](https://twitter.com/paralleltree). Download [here](https://github.com/4yn/Ched/releases).
 
 - Disabled double right click toggle between edit and select mode
