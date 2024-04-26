@@ -106,8 +106,10 @@ namespace Ched.UI.Windows
             Artist = ScoreBook.ArtistName;
             NotesDesigner = ScoreBook.NotesDesignerName;
 
-            MusicSourcePath = MusicSource.FilePath;
-            MusicSourceLatency = MusicSource.Latency;
+            MusicSource.FilePath = ScoreBook.Wave;
+            MusicSource.Latency = ScoreBook.WaveOffset;
+            MusicSourcePath = ScoreBook.Wave;
+            MusicSourceLatency = ScoreBook.WaveOffset;
         }
 
         public void CommitEdit()
@@ -118,6 +120,8 @@ namespace Ched.UI.Windows
 
             MusicSource.FilePath = MusicSourcePath;
             MusicSource.Latency = MusicSourceLatency;
+            ScoreBook.Wave = MusicSourcePath;
+            ScoreBook.WaveOffset = MusicSourceLatency;
         }
     }
 }

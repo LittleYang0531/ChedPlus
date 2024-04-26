@@ -500,16 +500,16 @@ namespace Ched.Components.Exporter
 
         public enum Difficulty
         {
-            [Description("BASIC")]
-            Basic,
-            [Description("ADVANCED")]
-            Advanced,
-            [Description("EXPERT")]
-            Expert,
-            [Description("MASTER")]
-            Master,
-            [Description("WORLD'S END")]
-            WorldsEnd
+            [Description("Normal")]
+            Normal,
+            [Description("Hard")]
+            Hard,
+            [Description("Extra")]
+            Extra,
+            [Description("Stella")]
+            Stella,
+            [Description("Olivier")]
+            Olivier
         }
     }
 }

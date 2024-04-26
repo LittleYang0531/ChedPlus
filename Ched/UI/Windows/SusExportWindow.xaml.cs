@@ -147,12 +147,12 @@ namespace Ched.UI.Windows
 
         public void BeginEdit()
         {
-            Difficulty = SusArgs.PlayDifficulty;
-            Level = SusArgs.PlayLevel;
-            SongId = SusArgs.SongId;
-            SoundFileName = SusArgs.SoundFileName;
-            SoundOffset = (double)SusArgs.SoundOffset;
-            JacketFileName = SusArgs.JacketFilePath;
+            Difficulty = (SusArgs.Difficulty)ScoreBook.Difficulty;
+            Level = ScoreBook.PlayLevel;
+            SongId = ScoreBook.SongId;
+            SoundFileName = ScoreBook.Wave;
+            SoundOffset = (double)ScoreBook.WaveOffset;
+            JacketFileName = ScoreBook.Jacket;
             HasPaddingBar = SusArgs.HasPaddingBar;
             AdditionalData = SusArgs.AdditionalData;
         }

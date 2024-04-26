@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Ched.Components.Exporter;
 using Ched.UI.Windows;
+using Ched.Core;
 
 namespace Ched.Plugins
 {

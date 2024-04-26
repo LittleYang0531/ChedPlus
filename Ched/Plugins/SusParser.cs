@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Ched.Core.Events;
 
 namespace Sus2Image.Converter
 {
@@ -15,6 +16,8 @@ namespace Sus2Image.Converter
         private Regex BpmDefinitionPattern { get; } = new Regex(@"#BPM(?<key>[0-9a-z]{2}):\s*(?<value>[0-9.]+)", RegexOptions.IgnoreCase);
         private Regex BpmCommandPattern { get; } = new Regex(@"#(?<barIndex>\d{3})08:\s*(?<data>[0-9a-z\s]+)", RegexOptions.IgnoreCase);
         private Regex TimeSignatureCommandPattern { get; } = new Regex(@"(?<barIndex>\d{3})02:\s*(?<value>[0-9.]+)");
+        private Regex HiSpeedCommandPattern { get; } = new Regex(@"#TIL00:\s+\""?(?<value>[^\""]*)", RegexOptions.IgnoreCase);
+        private Regex SplitLineCommandPattern { get; } = new Regex(@"#TIL01:\s+\""?(?<value>[^\""]*)", RegexOptions.IgnoreCase);
 
         public IDiagnosticCollector DiagnosticCollector { get; set; } = new NullDiagnosticCollector();
 
@@ -25,9 +28,17 @@ namespace Sus2Image.Converter
         private string Title;
         private string ArtistName;
         private string DesignerName;
+        private int Difficulty;
+        private string PlayLevel;
+        private string SongId;
+        private string Wave;
+        private double WaveOffset;
+        private string Jacket;
 
         public SusScoreData Parse(TextReader reader)
         {
+            List<HighSpeedChangeEvent> HiSpeeds = new List<HighSpeedChangeEvent>();
+            List<SplitLineChangeEvent> SplitLines = new List<SplitLineChangeEvent>();
             var shortNotesData = new List<LineData<Match>>();
             var longNotesData = new List<LineData<Match>>();
             var bpmData = new List<LineData<Match>>();
@@ -52,6 +63,72 @@ namespace Sus2Image.Converter
                 if (matchAction(SusNotePattern.Match(line), m => (m.Groups["longKey"].Success ? longNotesData : shortNotesData).Add(new LineData<Match>(lineIndex, CurrentBarIndexOffset, m)))) continue;
 
                 if (matchAction(TimeSignatureCommandPattern.Match(line), m => StoreTimeSignatureDefinition(lineIndex, int.Parse(m.Groups["barIndex"].Value) + CurrentBarIndexOffset, double.Parse(m.Groups["value"].Value)))) continue;
+
+                if (matchAction(HiSpeedCommandPattern.Match(line), m =>
+                {
+                    string expression = m.Groups["value"].Value;
+                    string[] splits = { ", " };
+                    var exp = expression.Split(splits, System.StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int i = 0; i < exp.Length; i++)
+                    {
+                        string tmp = exp[i];
+                        var tmp1 = tmp.Split(':');
+                        if (tmp1.Length != 2)
+                        {
+                            DiagnosticCollector.ReportWarning("Invalid HiSpeed Parameter: " + exp[i]);
+                            continue;
+                        }
+                        string beat = tmp1[0], type = tmp1[1];
+                        var tmp2 = beat.Split('\'');
+                        if (tmp2.Length != 2)
+                        {
+                            DiagnosticCollector.ReportWarning("Invalid HiSpeed Parameter: " + exp[i]);
+                            continue;
+                        }
+                        int tick = int.Parse(tmp2[0]) * TicksPerBeat * 4 + int.Parse(tmp2[1]);
+                        HighSpeedChangeEvent e = new HighSpeedChangeEvent();
+                        e.Tick = tick; e.SpeedRatio = decimal.Parse(tmp1[1]);
+                        HiSpeeds.Add(e);
+                    }
+                })) continue;
+
+                if (matchAction(SplitLineCommandPattern.Match(line), m =>
+                {
+                    string expression = m.Groups["value"].Value;
+                    string[] splits = { ", " };
+                    var exp = expression.Split(splits, System.StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int i = 0; i < exp.Length; i++)
+                    {
+                        string tmp = exp[i];
+                        var tmp1 = tmp.Split(':');
+                        if (tmp1.Length != 2)
+                        {
+                            DiagnosticCollector.ReportWarning("Invalid Split Line Parameter: " + exp[i]);
+                            continue;
+                        }
+                        string beat = tmp1[0], type = tmp1[1];
+                        var tmp2 = beat.Split('\'');
+                        if (tmp2.Length != 2)
+                        {
+                            DiagnosticCollector.ReportWarning("Invalid Split Line Parameter: " + exp[i]);
+                            continue;
+                        }
+                        var tmp3 = type.Split('.'); 
+                        if (tmp3.Length != 2)
+                        {
+                            DiagnosticCollector.ReportWarning("Invalid Split Line Parameter: " + exp[i]);
+                            continue;
+                        }
+                        while (tmp3[1].Length < 5) tmp3[1] += '0';
+                        int tick = int.Parse(tmp2[0]) * TicksPerBeat * 4 + int.Parse(tmp2[1]);
+                        SplitLineChangeEvent e = new SplitLineChangeEvent();
+                        e.Tick = tick; e.LineNumber = int.Parse(tmp3[0]);
+                        e.LineStyle = int.Parse(tmp3[1]);
+                        SplitLines.Add(e);
+                    }
+                })) continue;
             }
 
             if (!TimeSignatureDefinitions.ContainsKey(0))
@@ -111,12 +188,20 @@ namespace Sus2Image.Converter
 
             return new SusScoreData()
             {
+                HiSpeeds = HiSpeeds,
+                SplitLines = SplitLines,
                 TicksPerBeat = this.TicksPerBeat,
                 BpmDefinitions = bpmDic,
                 TimeSignatures = TimeSignatureDefinitions.ToDictionary(p => barIndexCalculator.GetTickFromBarIndex(p.Key), p => p.Value),
                 Title = this.Title,
                 ArtistName = this.ArtistName,
                 DesignerName = this.DesignerName,
+                Difficulty = this.Difficulty,
+                PlayLevel = this.PlayLevel,
+                SongId = this.SongId,
+                Wave = this.Wave,
+                WaveOffset = this.WaveOffset,
+                Jacket = this.Jacket,
                 ShortNotes = shortNotes,
                 LongNotes = longNotes
             };
@@ -149,10 +234,38 @@ namespace Sus2Image.Converter
                         TicksPerBeat = int.Parse(tpb.Value);
                         DiagnosticCollector.ReportInformation($"ticks per beatを{TicksPerBeat}に変更しました。");
                     }
-                    else
-                    {
+                    else if (value.IndexOf("lane_slided") == -1)
                         DiagnosticCollector.ReportWarning($"処理されないREQUESTコマンドです。(行: {lineIndex + 1})");
-                    }
+                    break;
+
+                case "DIFFICULTY":
+                    Difficulty = int.Parse(value);
+                    break;
+
+                case "PLAYLEVEL":
+                    PlayLevel = TrimLiteral(value);
+                    break;
+
+                case "SONGID":
+                    SongId = TrimLiteral(value);
+                    break;
+
+                case "WAVE":
+                    Wave = TrimLiteral(value);
+                    break;
+
+                case "WAVEOFFSET":
+                    WaveOffset = int.Parse(value);
+                    break;
+
+                case "JACKET":
+                    Jacket = TrimLiteral(value);
+                    break;
+
+                case "HISPEED":
+                    break;
+
+                case "MEASUREHS":
                     break;
 
                 default:

@@ -29,6 +29,12 @@ namespace Ched.Plugins
                     Title = sus.Title,
                     ArtistName = sus.ArtistName,
                     NotesDesignerName = sus.DesignerName,
+                    Difficulty = sus.Difficulty,
+                    PlayLevel = sus.PlayLevel,
+                    SongId = sus.SongId,
+                    Wave = sus.Wave,
+                    WaveOffset = sus.WaveOffset,
+                    Jacket = sus.Jacket,
                     Score = ConvertScore(args, sus)
                 };
             }
@@ -37,6 +43,8 @@ namespace Ched.Plugins
         private Score ConvertScore(IScoreBookImportPluginArgs args, SusScoreData raw)
         {
             var res = new Score() { TicksPerBeat = raw.TicksPerBeat };
+            res.Events.HighSpeedChangeEvents = raw.HiSpeeds;
+            res.Events.SplitLineChangeEvents = raw.SplitLines;
             res.Events.BpmChangeEvents = raw.BpmDefinitions.Select(p => new BpmChangeEvent() { Tick = p.Key, Bpm = p.Value }).ToList();
             res.Events.TimeSignatureChangeEvents = raw.TimeSignatures.Select(p =>
             {

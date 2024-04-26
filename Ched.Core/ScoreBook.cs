@@ -36,6 +36,18 @@ namespace Ched.Core
         [Newtonsoft.Json.JsonProperty]
         private string notesDesignerName = "";
         [Newtonsoft.Json.JsonProperty]
+        private int difficulty = 0;
+        [Newtonsoft.Json.JsonProperty]
+        private string playLevel = "";
+        [Newtonsoft.Json.JsonProperty]
+        private string songId = "";
+        [Newtonsoft.Json.JsonProperty]
+        private string wave = "";
+        [Newtonsoft.Json.JsonProperty]
+        private double waveOffset = 0;
+        [Newtonsoft.Json.JsonProperty]
+        private string jacket = "";
+        [Newtonsoft.Json.JsonProperty]
         private Score score = new Score();
         [Newtonsoft.Json.JsonProperty]
         private Dictionary<string, string> exportArgs = new Dictionary<string, string>();
@@ -76,6 +88,60 @@ namespace Ched.Core
         {
             get { return notesDesignerName; }
             set { notesDesignerName = value; }
+        }
+
+        /// <summary>
+        /// 设置困难度
+        /// </summary>
+        public int Difficulty
+        {
+            get { return difficulty; }
+            set { difficulty = value; }
+        }
+
+        /// <summary>
+        /// 设置关卡等级
+        /// </summary>
+        public string PlayLevel
+        {
+            get { return playLevel; }
+            set { playLevel = value; }
+        }
+
+        /// <summary>
+        /// 设置歌曲 ID
+        /// </summary>
+        public string SongId
+        {
+            get { return songId; }
+            set { songId = value; }
+        }
+
+        /// <summary>
+        /// 设置音频文件地址
+        /// </summary>
+        public string Wave
+        {
+            get { return wave; }
+            set { wave = value; }
+        }
+
+        /// <summary>
+        /// 设置音频偏移
+        /// </summary>
+        public double WaveOffset
+        {
+            get { return waveOffset; }
+            set { waveOffset = value; }
+        }
+
+        /// <summary>
+        /// 设置封面地址
+        /// </summary>
+        public string Jacket
+        {
+            get { return jacket; }
+            set { jacket = value; }
         }
 
         /// <summary>
