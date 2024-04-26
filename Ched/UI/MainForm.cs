@@ -70,7 +70,7 @@ namespace Ched.UI
             }
         }
 
-        private bool CanWidenLaneWidth => !IsPreviewMode && NoteView.UnitLaneWidth < 24;
+        private bool CanWidenLaneWidth => !IsPreviewMode && NoteView.UnitLaneWidth < 48;
         private bool CanNarrowLaneWidth => !IsPreviewMode && NoteView.UnitLaneWidth > 12;
         private bool CanZoomIn => !IsPreviewMode && NoteView.UnitBeatHeight < 960;
         private bool CanZoomOut => !IsPreviewMode && NoteView.UnitBeatHeight > 30;
@@ -86,7 +86,7 @@ namespace Ched.UI
 #endif
 
             InitializeComponent();
-            Size = new Size(420, 700);
+            Size = new Size(960, 720);
             Icon = Resources.MainIcon;
 
             ToolStripManager.RenderMode = ToolStripManagerRenderMode.System;
