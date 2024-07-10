@@ -5,6 +5,8 @@
 - Added Split Line Event
 - Added IsReturnWhenPlayFinished Option.
 - Added CopyEvents / CutEvents / PasteEvents Options.
+- Added PreviewSpeed Option in BookProperty.
+- Remove PlayAtHalfSpeed Option.
 
 # Original ChedPlus Readme
 
