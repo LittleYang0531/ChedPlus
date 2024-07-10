@@ -378,4 +378,7 @@
   <data name="PasteEvents" xml:space="preserve">
     <value>粘贴Event</value>
   </data>
+  <data name="PreviewSpeed" xml:space="preserve">
+    <value>预览速度</value>
+  </data>
 </root>

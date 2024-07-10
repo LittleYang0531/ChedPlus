@@ -130,14 +130,18 @@ namespace Ched.UI
 
         public string FilePath { get; set; }
 
+        public double PreviewSpeed { get; set; }
+
         public SoundSource()
         {
+            PreviewSpeed = 1.0;
         }
 
         public SoundSource(string path, double latency)
         {
             FilePath = path;
             Latency = latency;
+            PreviewSpeed = 1.0;
         }
     }
 }

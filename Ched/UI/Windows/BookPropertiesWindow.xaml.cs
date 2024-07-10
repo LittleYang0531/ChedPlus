@@ -90,6 +90,18 @@ namespace Ched.UI.Windows
             }
         }
 
+        private double previewSpeed;
+        public double PreviewSpeed
+        {
+            get => previewSpeed;
+            set
+            {
+                if (value == previewSpeed) return;
+                previewSpeed = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public BookPropertiesWindowViewModel()
         {
         }
@@ -110,6 +122,7 @@ namespace Ched.UI.Windows
             MusicSource.Latency = ScoreBook.WaveOffset;
             MusicSourcePath = ScoreBook.Wave;
             MusicSourceLatency = ScoreBook.WaveOffset;
+            PreviewSpeed = MusicSource.PreviewSpeed;
         }
 
         public void CommitEdit()
@@ -120,6 +133,7 @@ namespace Ched.UI.Windows
 
             MusicSource.FilePath = MusicSourcePath;
             MusicSource.Latency = MusicSourceLatency;
+            MusicSource.PreviewSpeed = PreviewSpeed;
             ScoreBook.Wave = MusicSourcePath;
             ScoreBook.WaveOffset = MusicSourceLatency;
         }

@@ -378,4 +378,7 @@
   <data name="PasteEvents" xml:space="preserve">
     <value>Paste Selected Events</value>
   </data>
+  <data name="PreviewSpeed" xml:space="preserve">
+    <value>Preview Speed</value>
+  </data>
 </root>

@@ -107,6 +107,7 @@ namespace Ched.UI
                 UnitLaneWidth = ApplicationSettings.Default.UnitLaneWidth,
                 InsertAirWithAirAction = ApplicationSettings.Default.InsertAirWithAirAction,
                 IsFollowWhenPlaying = ApplicationSettings.Default.IsFollowWhenPlaying,
+                IsReturnWhenPlayFinished = ApplicationSettings.Default.IsReturnWhenPlayFinished,
                 Recorder = Recorder
             };
 
@@ -294,6 +295,7 @@ namespace Ched.UI
             {
                 SoundSettings.Default.ScoreSound.TryGetValue(book.Path, out SoundSource src);
                 if (src != null) CurrentMusicSource = src;
+                CurrentMusicSource.PreviewSpeed = 1.0;
             }
             Recorder.Clear();
         }
@@ -508,6 +510,13 @@ namespace Ched.UI
                 {
                     NoteView.CurrentTick = startCurrentTick;
                     NoteView.HeadTick = startHeadTick;
+                } 
+                else
+                {
+                    var derta = NoteView.CurrentTick - NoteView.HeadTick;
+                    NoteView.CurrentTick = (int)(Math.Round(NoteView.CurrentTick / NoteView.QuantizeTick) * NoteView.QuantizeTick);
+                    if (NoteView.IsFollowWhenPlaying) NoteView.HeadTick = NoteView.CurrentTick - derta + 61;
+                    NoteViewScrollBar.Value = -NoteView.HeadTick;
                 }
                 NoteView.Editable = CanEdit;
             }
@@ -986,19 +995,6 @@ namespace Ched.UI
                 Checked = ApplicationSettings.Default.IsReturnWhenPlayFinished
             };
 
-            var isPlayAtHalfSpeedItem = new ToolStripMenuItem(MainFormStrings.PlayAtHalfSpeed, null, (s, e) =>
-            {
-                var item = s as ToolStripMenuItem;
-                item.Checked = !item.Checked;
-                PreviewManager.IsPlayAtHalfSpeed = item.Checked;
-                ApplicationSettings.Default.IsPlayAtHalfSpeed = item.Checked;
-            })
-            {
-                Checked = ApplicationSettings.Default.IsPlayAtHalfSpeed
-            };
-            PreviewManager.Started += (s, e) => isPlayAtHalfSpeedItem.Enabled = false;
-            PreviewManager.Finished += (s, e) => isPlayAtHalfSpeedItem.Enabled = true;
-
             var playItem = shortcutItemBuilder.BuildItem(Commands.PlayPreview, MainFormStrings.Play);
 
             var stopItem = new ToolStripMenuItem(MainFormStrings.Stop, null, (s, e) =>
@@ -1009,7 +1005,7 @@ namespace Ched.UI
             var playMenuItems = new ToolStripItem[]
             {
                 playItem, stopItem, new ToolStripSeparator(),
-                isAbortAtLastNoteItem, isFollowWhenPlayingItem, isReturnWhenPlayFinished, isPlayAtHalfSpeedItem
+                isAbortAtLastNoteItem, isFollowWhenPlayingItem, isReturnWhenPlayFinished
             };
 
             var hideRecorderItem = new ToolStripMenuItem(MainFormStrings.RecordHide, null, (s, e) =>

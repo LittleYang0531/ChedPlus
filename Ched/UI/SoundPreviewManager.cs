@@ -21,7 +21,7 @@ namespace Ched.UI
         public event EventHandler Finished;
         public event EventHandler ExceptionThrown;
 
-        private int CurrentTick { get; set; }
+        public int CurrentTick { get; set; }
         private SoundSource ClapSource { get; set; }
         private SoundManager SoundManager { get; } = new SoundManager();
         private ISoundPreviewContext PreviewContext { get; set; }
@@ -46,10 +46,16 @@ namespace Ched.UI
             get { return isPlayAtHalfSpeed; }
             set {
                 isPlayAtHalfSpeed = value;
-                PlaySpeed = isPlayAtHalfSpeed ? 0.5 : 1.0;
+                // PlaySpeed = isPlayAtHalfSpeed ? 0.5 : 1.0;
             }
         }
-        private double PlaySpeed { get; set; }
+        public double PlaySpeed {
+            get => PreviewContext.MusicSource.PreviewSpeed;
+            set
+            {
+                PreviewContext.MusicSource.PreviewSpeed = value;
+            }
+        }
 
         public SoundPreviewManager(Control syncControl)
         {

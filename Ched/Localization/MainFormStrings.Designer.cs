@@ -556,6 +556,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   查找类似 プレビュー速度 的本地化字符串。
+        /// </summary>
+        public static string PreviewSpeed {
+            get {
+                return ResourceManager.GetString("PreviewSpeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 記録(追加) 的本地化字符串。
         /// </summary>
         public static string RecordAdd {

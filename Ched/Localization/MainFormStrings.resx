@@ -378,4 +378,7 @@
   <data name="PasteEvents" xml:space="preserve">
     <value>選択したイベントの貼り付け</value>
   </data>
+  <data name="PreviewSpeed" xml:space="preserve">
+    <value>プレビュー速度</value>
+  </data>
 </root>
