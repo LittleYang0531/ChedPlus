@@ -153,6 +153,10 @@ namespace Ched.UI.Shortcuts
             RegisterShortcut(Commands.Paste, Keys.Control | Keys.V);
             RegisterShortcut(Commands.PasteFlip, Keys.Control | Keys.Shift | Keys.V);
 
+            RegisterShortcut(Commands.CutSelectedEvents, Keys.Control | Keys.Alt | Keys.X);
+            RegisterShortcut(Commands.CopySelectedEvents, Keys.Control | Keys.Alt | Keys.C);
+            RegisterShortcut(Commands.PasteEvents, Keys.Control | Keys.Alt | Keys.V);
+
             RegisterShortcut(Commands.SelectAll, Keys.Control | Keys.A);
 
             RegisterShortcut(Commands.RemoveSelectedNotes, Keys.Delete);

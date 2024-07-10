@@ -25,6 +25,10 @@ namespace Ched.UI.Shortcuts
         public static string Paste => "editor.action.clipboardPaste";
         public static string PasteFlip => "editor.action.clipboardPasteFlip";
 
+        public static string CutSelectedEvents => "editor.action.cutSelectedEvents";
+        public static string CopySelectedEvents => "editor.action.copySelectedEvents";
+        public static string PasteEvents => "editor.action.pasteEvents";
+
         public static string SelectAll => "editor.action.selectAll";
         public static string SelectToBegin => "editor.action.selectToBegin";
         public static string SelectToEnd => "editor.action.selectToEnd";

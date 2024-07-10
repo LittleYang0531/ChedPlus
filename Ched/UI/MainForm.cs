@@ -504,8 +504,11 @@ namespace Ched.UI
             {
                 PreviewManager.Finished -= lambda;
                 NoteView.Playing = false;
-                NoteView.CurrentTick = startCurrentTick;
-                NoteView.HeadTick = startHeadTick;
+                if (NoteView.IsReturnWhenPlayFinished)
+                {
+                    NoteView.CurrentTick = startCurrentTick;
+                    NoteView.HeadTick = startHeadTick;
+                }
                 NoteView.Editable = CanEdit;
             }
 
@@ -570,6 +573,10 @@ namespace Ched.UI
             commandSource.RegisterCommand(Commands.Copy, MainFormStrings.Copy, () => NoteView.CopySelectedNotes());
             commandSource.RegisterCommand(Commands.Paste, MainFormStrings.Paste, () => NoteView.PasteNotes());
             commandSource.RegisterCommand(Commands.PasteFlip, MainFormStrings.PasteFlipped, () => NoteView.PasteFlippedNotes());
+
+            commandSource.RegisterCommand(Commands.CutSelectedEvents, MainFormStrings.CutSelectedEvents, () => NoteView.CutSelectedEvents());
+            commandSource.RegisterCommand(Commands.CopySelectedEvents, MainFormStrings.CopySelectedEvents, () => NoteView.CopySelectedEvents());
+            commandSource.RegisterCommand(Commands.PasteEvents, MainFormStrings.PasteEvents, () => NoteView.PasteEvents());
 
             commandSource.RegisterCommand(Commands.SelectAll, MainFormStrings.SelectAll, () => NoteView.SelectAll());
             commandSource.RegisterCommand(Commands.SelectToBegin, MainFormStrings.SelectToBeginning, () => NoteView.SelectToBeginning());
@@ -858,6 +865,10 @@ namespace Ched.UI
             var pasteItem = shortcutItemBuilder.BuildItem(Commands.Paste, MainFormStrings.Paste);
             var pasteFlippedItem = shortcutItemBuilder.BuildItem(Commands.PasteFlip, MainFormStrings.PasteFlipped);
 
+            var cutSelectedEvents = shortcutItemBuilder.BuildItem(Commands.CutSelectedEvents, MainFormStrings.CutSelectedEvents);
+            var copySelectedEvents = shortcutItemBuilder.BuildItem(Commands.CopySelectedEvents, MainFormStrings.CopySelectedEvents);
+            var pasteSelectedEvents = shortcutItemBuilder.BuildItem(Commands.PasteEvents, MainFormStrings.PasteEvents);
+
             var selectAllItem = shortcutItemBuilder.BuildItem(Commands.SelectAll, MainFormStrings.SelectAll);
             var selectToEndItem = shortcutItemBuilder.BuildItem(Commands.SelectToEnd, MainFormStrings.SelectToEnd);
             var selectoToBeginningItem = shortcutItemBuilder.BuildItem(Commands.SelectToBegin, MainFormStrings.SelectToBeginning);
@@ -906,6 +917,7 @@ namespace Ched.UI
             {
                 undoItem, redoItem, new ToolStripSeparator(),
                 cutItem, copyItem, pasteItem, pasteFlippedItem, new ToolStripSeparator(),
+                cutSelectedEvents, copySelectedEvents, pasteSelectedEvents, new ToolStripSeparator(),
                 selectAllItem, selectToEndItem, selectoToBeginningItem, new ToolStripSeparator(),
                 flipSelectedNotesItem, removeSelectedNotesItem, removeEventsItem, new ToolStripSeparator(),
                 insertAirWithAirActionItem, new ToolStripSeparator(),
@@ -962,7 +974,18 @@ namespace Ched.UI
             {
                 Checked = ApplicationSettings.Default.IsFollowWhenPlaying
             };
-            
+
+            var isReturnWhenPlayFinished = new ToolStripMenuItem(MainFormStrings.ReturnWhenPlayFinished, null, (s, e) =>
+            {
+                var item = s as ToolStripMenuItem;
+                item.Checked = !item.Checked;
+                noteView.IsReturnWhenPlayFinished = item.Checked;
+                ApplicationSettings.Default.IsReturnWhenPlayFinished = item.Checked;
+            })
+            {
+                Checked = ApplicationSettings.Default.IsReturnWhenPlayFinished
+            };
+
             var isPlayAtHalfSpeedItem = new ToolStripMenuItem(MainFormStrings.PlayAtHalfSpeed, null, (s, e) =>
             {
                 var item = s as ToolStripMenuItem;
@@ -986,7 +1009,7 @@ namespace Ched.UI
             var playMenuItems = new ToolStripItem[]
             {
                 playItem, stopItem, new ToolStripSeparator(),
-                isAbortAtLastNoteItem, isFollowWhenPlayingItem, isPlayAtHalfSpeedItem
+                isAbortAtLastNoteItem, isFollowWhenPlayingItem, isReturnWhenPlayFinished, isPlayAtHalfSpeedItem
             };
 
             var hideRecorderItem = new ToolStripMenuItem(MainFormStrings.RecordHide, null, (s, e) =>

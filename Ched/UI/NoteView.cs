@@ -56,6 +56,7 @@ namespace Ched.UI
         private bool isNewSlideStepCurve = true;
         private bool playing = false;
         private bool isFollowWhenPlaying = false;
+        private bool isReturnWhenPlayFinished = false;
         private bool isShowRecorder = false;
 
         /// <summary>
@@ -338,6 +339,12 @@ namespace Ched.UI
         {
             get { return isFollowWhenPlaying; }
             set { isFollowWhenPlaying = value; }
+        }
+
+        public bool IsReturnWhenPlayFinished
+        {
+            get { return isReturnWhenPlayFinished; }
+            set { isReturnWhenPlayFinished = value; }
         }
 
         public bool IsShowRecorder
@@ -2098,6 +2105,22 @@ namespace Ched.UI
             return c;
         }
 
+        public Core.EventCollection GetSelectedEvents()
+        {
+            int minTick = SelectedRange.StartTick + (SelectedRange.Duration < 0 ? SelectedRange.Duration : 0);
+            int maxTick = SelectedRange.StartTick + (SelectedRange.Duration < 0 ? 0 : SelectedRange.Duration);
+            bool contained(EventBase p) => p.Tick != 0 && minTick <= p.Tick && maxTick >= p.Tick;
+
+            var c = new Core.EventCollection();
+
+            c.BpmChangeEvents.AddRange(ScoreEvents.BpmChangeEvents.Where(p => contained(p)));
+            c.TimeSignatureChangeEvents.AddRange(ScoreEvents.TimeSignatureChangeEvents.Where(p => contained(p)));
+            c.HighSpeedChangeEvents.AddRange(ScoreEvents.HighSpeedChangeEvents.Where(p => contained(p)));
+            c.SplitLineChangeEvents.AddRange(ScoreEvents.SplitLineChangeEvents.Where(p => contained(p)));
+
+            return c;
+        }
+
         public void SelectAll()
         {
             SelectedRange = new SelectionRange()
@@ -2137,15 +2160,35 @@ namespace Ched.UI
             RemoveSelectedNotes();
         }
 
+        public void CutSelectedEvents()
+        {
+            CopySelectedEvents();
+            RemoveSelectedEvents();
+        }
+
         public void CopySelectedNotes()
         {
             var data = new SelectionData(SelectedRange.StartTick + Math.Min(SelectedRange.Duration, 0), UnitBeatTick, GetSelectedNotes());
             Clipboard.SetDataObject(data, true);
         }
 
+        public void CopySelectedEvents()
+        {
+            var data = new SelectionData(SelectedRange.StartTick + Math.Min(SelectedRange.Duration, 0), UnitBeatTick, GetSelectedEvents());
+            Clipboard.SetDataObject(data, true);
+        }
+
         public void PasteNotes()
         {
             var op = PasteNotes(p => { });
+            if (op == null) return;
+            OperationManager.Push(op);
+            Invalidate();
+        }
+
+        public void PasteEvents()
+        {
+            var op = PasteEvents(p => { });
             if (op == null) return;
             OperationManager.Push(op);
             Invalidate();
@@ -2171,7 +2214,7 @@ namespace Ched.UI
             if (obj == null || !obj.GetDataPresent(typeof(SelectionData))) return null;
 
             var data = obj.GetData(typeof(SelectionData)) as SelectionData;
-            if (data.IsEmpty) return null;
+            if (data.IsNoteEmpty) return null;
 
             double tickFactor = UnitBeatTick / (double)data.TicksPerBeat;
             int originTick = (int)(data.StartTick * tickFactor);
@@ -2211,6 +2254,33 @@ namespace Ched.UI
                 .Concat(data.SelectedNotes.Slides.Select(p => new InsertSlideOperation(Notes, p)))
                 .Concat(data.SelectedNotes.Airs.Select(p => new InsertAirOperation(Notes, p)))
                 .Concat(data.SelectedNotes.AirActions.Select(p => new InsertAirActionOperation(Notes, p)));
+            var composite = new CompositeOperation("クリップボードからペースト", op.ToList());
+            composite.Redo(); // 追加書くの面倒になったので許せ
+            return composite;
+        }
+
+        protected IOperation PasteEvents(Action<SelectionData> action)
+        {
+            var obj = Clipboard.GetDataObject();
+            if (obj == null || !obj.GetDataPresent(typeof(SelectionData))) return null;
+
+            var data = obj.GetData(typeof(SelectionData)) as SelectionData;
+            if (data.IsEventEmpty) return null;
+
+            double tickFactor = UnitBeatTick / (double)data.TicksPerBeat;
+            int originTick = (int)(data.StartTick * tickFactor);
+            if (data.TicksPerBeat != UnitBeatTick)
+                data.SelectedEvents.UpdateTicksPerBeat(tickFactor);
+
+            foreach (var e in data.SelectedEvents.BpmChangeEvents) e.Tick = e.Tick - originTick + CurrentTick;
+            foreach (var e in data.SelectedEvents.TimeSignatureChangeEvents) e.Tick = e.Tick - originTick + CurrentTick;
+            foreach (var e in data.SelectedEvents.HighSpeedChangeEvents) e.Tick = e.Tick - originTick + CurrentTick;
+            foreach (var e in data.SelectedEvents.SplitLineChangeEvents) e.Tick = e.Tick - originTick + CurrentTick;
+
+            var op = data.SelectedEvents.BpmChangeEvents.Select(p => new InsertEventOperation<BpmChangeEvent>(ScoreEvents.BpmChangeEvents, p)).Cast<IOperation>()
+                .Concat(data.SelectedEvents.TimeSignatureChangeEvents.Select(p => new InsertEventOperation<TimeSignatureChangeEvent>(ScoreEvents.TimeSignatureChangeEvents, p)))
+                .Concat(data.SelectedEvents.HighSpeedChangeEvents.Select(p => new InsertEventOperation<HighSpeedChangeEvent>(ScoreEvents.HighSpeedChangeEvents, p)))
+                .Concat(data.SelectedEvents.SplitLineChangeEvents.Select(p => new InsertEventOperation<SplitLineChangeEvent>(ScoreEvents.SplitLineChangeEvents, p)));
             var composite = new CompositeOperation("クリップボードからペースト", op.ToList());
             composite.Redo(); // 追加書くの面倒になったので許せ
             return composite;
@@ -2632,12 +2702,30 @@ namespace Ched.UI
             }
         }
 
-        public bool IsEmpty
+        public Core.EventCollection SelectedEvents
+        {
+            get
+            {
+                CheckRestored();
+                return Data.SelectedEvents;
+            }
+        }
+
+        public bool IsNoteEmpty
         {
             get
             {
                 CheckRestored();
                 return SelectedNotes.GetShortNotes().Count() == 0 && SelectedNotes.Holds.Count == 0 && SelectedNotes.Slides.Count == 0 && SelectedNotes.Airs.Count == 0 && SelectedNotes.AirActions.Count == 0;
+            }
+        }
+
+        public bool IsEventEmpty
+        {
+            get
+            {
+                CheckRestored();
+                return SelectedEvents.BpmChangeEvents.Count == 0 && SelectedEvents.TimeSignatureChangeEvents.Count == 0 && SelectedEvents.HighSpeedChangeEvents.Count == 0 && SelectedEvents.SplitLineChangeEvents.Count == 0;
             }
         }
 
@@ -2657,6 +2745,12 @@ namespace Ched.UI
         public SelectionData(int startTick, int ticksPerBeat, NoteCollection notes)
         {
             Data = new InnerData(startTick, ticksPerBeat, notes);
+            serializedText = Newtonsoft.Json.JsonConvert.SerializeObject(Data, SerializerSettings);
+        }
+
+        public SelectionData(int startTick, int ticksPerBeat, EventCollection events)
+        {
+            Data = new InnerData(startTick, ticksPerBeat, events);
             serializedText = Newtonsoft.Json.JsonConvert.SerializeObject(Data, SerializerSettings);
         }
 
@@ -2690,15 +2784,36 @@ namespace Ched.UI
             [Newtonsoft.Json.JsonProperty]
             private NoteCollection selectedNotes;
 
+            [Newtonsoft.Json.JsonProperty]
+            private bool isNotes;
+
+            [Newtonsoft.Json.JsonProperty]
+            private EventCollection selectedEvents;
+
             public int StartTick => startTick;
             public int TicksPerBeat => ticksPerBeat;
+            public bool IsNotes => isNotes;
             public NoteCollection SelectedNotes => selectedNotes;
+            public EventCollection SelectedEvents => selectedEvents;
+
+            public InnerData() { }
 
             public InnerData(int startTick, int ticksPerBeat, NoteCollection notes)
             {
                 this.startTick = startTick;
                 this.ticksPerBeat = ticksPerBeat;
+                isNotes = true;
                 selectedNotes = notes;
+                selectedEvents = new EventCollection();
+            }
+
+            public InnerData(int startTick, int ticksPerBeat, EventCollection events)
+            {
+                this.startTick = startTick;
+                this.ticksPerBeat = ticksPerBeat;
+                isNotes = false;
+                selectedNotes = new NoteCollection();
+                selectedEvents = events;
             }
         }
     }

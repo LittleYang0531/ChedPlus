@@ -57,6 +57,14 @@ namespace Ched.Configuration
 
         [UserScopedSetting]
         [DefaultSettingValue("False")]
+        public bool IsReturnWhenPlayFinished
+        {
+            get { return ((bool)(this["IsReturnWhenPlayFinished"])); }
+            set { this["IsReturnWhenPlayFinished"] = value; }
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("False")]
         public bool IsPlayAtHalfSpeed
         {
             get { return ((bool)(this["IsPlayAtHalfSpeed"])); }

@@ -366,4 +366,16 @@
   <data name="RecordShow" xml:space="preserve">
     <value>Show Recorder</value>
   </data>
+  <data name="ReturnWhenPlayFinished" xml:space="preserve">
+    <value>Return When Play Finished</value>
+  </data>
+  <data name="CopySelectedEvents" xml:space="preserve">
+    <value>Copy Selected Events</value>
+  </data>
+  <data name="CutSelectedEvents" xml:space="preserve">
+    <value>Cut Selected Events</value>
+  </data>
+  <data name="PasteEvents" xml:space="preserve">
+    <value>Paste Selected Events</value>
+  </data>
 </root>

@@ -366,4 +366,16 @@
   <data name="RecordShow" xml:space="preserve">
     <value>表示</value>
   </data>
+  <data name="ReturnWhenPlayFinished" xml:space="preserve">
+    <value>再生終了時に戻る</value>
+  </data>
+  <data name="CopySelectedEvents" xml:space="preserve">
+    <value>選択したイベントのコピー</value>
+  </data>
+  <data name="CutSelectedEvents" xml:space="preserve">
+    <value>選択したイベントを切り取る</value>
+  </data>
+  <data name="PasteEvents" xml:space="preserve">
+    <value>選択したイベントの貼り付け</value>
+  </data>
 </root>
