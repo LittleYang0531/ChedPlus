@@ -3,6 +3,8 @@
 [Ched](https://github.com/4yn/Ched) designed for World Dai Star(Stellarity). Respect [@paralleltree](https://twitter.com/paralleltree) and [@4yn](https://github.com/4yn). Download [here](https://github.com/LittleYang0531/ChedPlus/releases)
 
 - Added Split Line Event
+- Added IsReturnWhenPlayFinished Option.
+- Added CopyEvents / CutEvents / PasteEvents Options.
 
 # Original ChedPlus Readme
 
