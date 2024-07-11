@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Windows.Forms;
 using Ched.Core;
 using Ched.Localization;
+using Newtonsoft.Json.Linq;
 
 namespace Ched.UI.Windows
 {
@@ -98,16 +99,21 @@ namespace Ched.UI.Windows
             {
                 if (value == previewSpeed) return;
                 previewSpeed = value;
+                (Father.Controls.Find("PreviewSpeedBox", true)[0] as NumericUpDown).Value = (decimal)value;
                 NotifyPropertyChanged();
             }
         }
 
-        public BookPropertiesWindowViewModel()
+        private MainForm Father { get; set; }
+
+        public BookPropertiesWindowViewModel(MainForm father)
         {
+            Father = father;
         }
 
-        public BookPropertiesWindowViewModel(ScoreBook scoreBook, SoundSource musicSource)
+        public BookPropertiesWindowViewModel(MainForm father, ScoreBook scoreBook, SoundSource musicSource)
         {
+            Father = father;
             ScoreBook = scoreBook;
             MusicSource = musicSource;
         }

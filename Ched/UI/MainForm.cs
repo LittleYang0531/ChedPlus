@@ -569,7 +569,7 @@ namespace Ched.UI
             });
             commandSource.RegisterCommand(Commands.ShowScoreBookProperties, MainFormStrings.BookProperty, () =>
             {
-                var vm = new BookPropertiesWindowViewModel(ScoreBook, CurrentMusicSource);
+                var vm = new BookPropertiesWindowViewModel(this, ScoreBook, CurrentMusicSource);
                 var window = new BookPropertiesWindow() { DataContext = vm };
                 window.ShowDialog(this);
             });
@@ -1293,6 +1293,26 @@ namespace Ched.UI
             };
             quantizeComboBox.SelectedIndex = 1;
 
+            var nud = new NumericUpDown();
+            nud.Minimum = 0.1m;
+            nud.Maximum = 2.0m;
+            nud.DecimalPlaces = 2;
+            nud.Increment = 0.05m;
+            nud.Value = 1.0m;
+            nud.ReadOnly = true;
+            nud.Name = "PreviewSpeedBox";
+            var previewSpeedBox = new ToolStripControlHost(nud)
+            {
+                AutoSize = false,
+                Width = 80,
+                Font = new Font("Microsoft YaHei", 9.0f)
+            };
+            previewSpeedBox.Text = MainFormStrings.PreviewSpeed;
+            previewSpeedBox.TextChanged += (s, e) =>
+            {
+                CurrentMusicSource.PreviewSpeed = (double)nud.Value;
+            };
+
             noteView.NewNoteTypeChanged += (s, e) =>
             {
                 tapButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Tap);
@@ -1346,7 +1366,7 @@ namespace Ched.UI
             return new ToolStrip(new ToolStripItem[]
             {
                 tapButton, exTapKind, holdButton, slideButton, slideStepButton, slideCurveButton, airKind, airActionButton, flickButton, damageButton,
-                quantizeComboBox
+                quantizeComboBox, previewSpeedBox
             });
         }
     }
