@@ -2347,6 +2347,7 @@ namespace Ched.UI
             int minTick = SelectedRange.StartTick + (SelectedRange.Duration < 0 ? SelectedRange.Duration : 0);
             int maxTick = SelectedRange.StartTick + (SelectedRange.Duration < 0 ? 0 : SelectedRange.Duration);
             bool isContained(EventBase p) => p.Tick != 0 && minTick <= p.Tick && maxTick >= p.Tick;
+            bool isContained2(EventBase p) => minTick <= p.Tick && maxTick >= p.Tick;
             var events = ScoreEvents;
 
             var bpmOp = events.BpmChangeEvents.Where(p => isContained(p)).ToList().Select(p =>
@@ -2354,12 +2355,12 @@ namespace Ched.UI
                 return new RemoveEventOperation<BpmChangeEvent>(events.BpmChangeEvents, p);
             });
 
-            var speedOp = events.HighSpeedChangeEvents.Where(p => isContained(p)).ToList().Select(p =>
+            var speedOp = events.HighSpeedChangeEvents.Where(p => isContained2(p)).ToList().Select(p =>
             {
                 return new RemoveEventOperation<HighSpeedChangeEvent>(events.HighSpeedChangeEvents, p);
             });
 
-            var splitOp = events.SplitLineChangeEvents.Where(p => isContained(p)).ToList().Select(p =>
+            var splitOp = events.SplitLineChangeEvents.Where(p => isContained2(p)).ToList().Select(p =>
             {
                 return new RemoveEventOperation<SplitLineChangeEvent>(events.SplitLineChangeEvents, p);
             });
