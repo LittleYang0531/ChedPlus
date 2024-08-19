@@ -106,6 +106,31 @@
                         <local:BindableNumericUpDown Grid.Column="1" Value="{Binding MusicSourceLatency}" DecimalPlaces="3" Minimum="-100" Maximum="100" Increment="0.01" />
                         <Label Grid.Column="2" Content="[s]" />
                     </Grid>
+					<Grid Style="{StaticResource ResourceKey=InputFieldRow}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition MaxWidth="200" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Grid.Resources>
+							<Style TargetType="Slider">
+								<Setter Property="Minimum" Value="1" />
+								<Setter Property="Maximum" Value="100" />
+								<Setter Property="TickPlacement" Value="BottomRight" />
+								<Setter Property="TickFrequency" Value="10" />
+								<Setter Property="VerticalAlignment" Value="Center" />
+							</Style>
+						</Grid.Resources>
+
+						<Label Grid.Row="0" Grid.Column="0" Content="{x:Static localization:MainFormStrings.Volume}" />
+						<Slider Grid.Row="0" Grid.Column="1" Value="{Binding Volume}" />
+
+						<Label Grid.Row="1" Grid.Column="0" Content="{x:Static localization:MainFormStrings.SfxVolume}" />
+						<Slider Grid.Row="1" Grid.Column="1" Value="{Binding SfxVolume}" />
+					</Grid>
                 </StackPanel>
             </GroupBox>
 

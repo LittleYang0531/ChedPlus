@@ -55,15 +55,15 @@ namespace Ched.UI
             }
         }
 
-        public void Play(string path)
+        /* public void Play(string path)
         {
-            Play(path, 0, 1.0);
-        }
+            Play(path, 0, 1.0, 1.0);
+        } */
 
-        public void Play(string path, double offset, double speed)
+        public void Play(string path, double offset, double speed, double volume)
         {
             CheckSupported();
-            Task.Run(() => PlayInternal(path, offset, speed))
+            Task.Run(() => PlayInternal(path, offset, speed, volume))
                 .ContinueWith(p =>
                 {
                     if (p.Exception != null)
@@ -74,7 +74,7 @@ namespace Ched.UI
                 });
         }
 
-        private void PlayInternal(string path, double offset, double speed)
+        private void PlayInternal(string path, double offset, double speed, double volume)
         {
             lock (Players)
             {
@@ -82,6 +82,7 @@ namespace Ched.UI
                 var player = Players[path];
                 player.Position = TimeSpan.FromSeconds(offset);
                 player.Tempo = speed * 100 - 100;
+                player.Volume = volume;
                 player.Play();
             }
         }
@@ -127,7 +128,6 @@ namespace Ched.UI
         /// この値は、タイミングよく音声が出力されるまでの秒数です。
         /// </summary>
         public double Latency { get; set; }
-
         public string FilePath { get; set; }
 
         private double previewSpeed;
@@ -141,9 +141,33 @@ namespace Ched.UI
             }
         }
 
+        private double volume = 1.0;
+        public double Volume
+        {
+            get => volume;
+            set
+            {
+                if (volume == value) return;
+                volume = value;
+            }
+        }
+
+        private double sfxVolume = 1.0;
+        public double SfxVolume
+        {
+            get => sfxVolume;
+            set
+            {
+                if (sfxVolume == value) return;
+                sfxVolume = value;
+            }
+        }
+
         public SoundSource()
         {
             PreviewSpeed = 1.0;
+            Volume = 100.0;
+            SfxVolume = 100.0;
         }
 
         public SoundSource(string path, double latency)
@@ -151,6 +175,8 @@ namespace Ched.UI
             FilePath = path;
             Latency = latency;
             PreviewSpeed = 1.0;
+            Volume = 100.0;
+            SfxVolume = 100.0;
         }
     }
 }

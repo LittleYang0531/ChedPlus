@@ -381,4 +381,10 @@
   <data name="PreviewSpeed" xml:space="preserve">
     <value>预览速度</value>
   </data>
+  <data name="SfxVolume" xml:space="preserve">
+    <value>音效音量</value>
+  </data>
+  <data name="Volume" xml:space="preserve">
+    <value>背景乐音量</value>
+  </data>
 </root>

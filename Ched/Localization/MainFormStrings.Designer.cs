@@ -736,6 +736,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   查找类似 SE 音量 的本地化字符串。
+        /// </summary>
+        public static string SfxVolume {
+            get {
+                return ResourceManager.GetString("SfxVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 SLIDE(湾曲) 的本地化字符串。
         /// </summary>
         public static string SlideCurve {
@@ -822,6 +831,15 @@ namespace Ched.Localization {
         public static string ViewMenu {
             get {
                 return ResourceManager.GetString("ViewMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 BGM 音量 的本地化字符串。
+        /// </summary>
+        public static string Volume {
+            get {
+                return ResourceManager.GetString("Volume", resourceCulture);
             }
         }
         

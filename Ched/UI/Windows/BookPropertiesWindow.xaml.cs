@@ -104,6 +104,30 @@ namespace Ched.UI.Windows
             }
         }
 
+        private double volume;
+        public double Volume
+        {
+            get => volume;
+            set
+            {
+                if (value == volume) return;
+                volume = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private double sfxVolume;
+        public double SfxVolume
+        {
+            get => sfxVolume;
+            set
+            {
+                if (value == sfxVolume) return;
+                sfxVolume = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private MainForm Father { get; set; }
 
         public BookPropertiesWindowViewModel(MainForm father)
@@ -129,6 +153,8 @@ namespace Ched.UI.Windows
             MusicSourcePath = ScoreBook.Wave;
             MusicSourceLatency = ScoreBook.WaveOffset;
             PreviewSpeed = MusicSource.PreviewSpeed;
+            Volume = MusicSource.Volume;
+            SfxVolume = MusicSource.SfxVolume;
         }
 
         public void CommitEdit()
@@ -142,6 +168,8 @@ namespace Ched.UI.Windows
             MusicSource.PreviewSpeed = PreviewSpeed;
             ScoreBook.Wave = MusicSourcePath;
             ScoreBook.WaveOffset = MusicSourceLatency;
+            MusicSource.Volume = Volume;
+            MusicSource.SfxVolume = SfxVolume;
         }
     }
 }

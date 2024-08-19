@@ -57,6 +57,24 @@ namespace Ched.UI
             }
         }
 
+        public double Volume
+        {
+            get => PreviewContext.MusicSource.Volume;
+            set
+            {
+                PreviewContext.MusicSource.Volume = value;
+            }
+        }
+
+        public double SfxVolume
+        {
+            get => PreviewContext.MusicSource.SfxVolume;
+            set
+            {
+                PreviewContext.MusicSource.SfxVolume = value;
+            }
+        }
+
         public SoundPreviewManager(Control syncControl)
         {
             SyncControl = syncControl;
@@ -108,7 +126,7 @@ namespace Ched.UI
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(headGap));
                 }
                 if (!Playing) return;
-                SoundManager.Play(context.MusicSource.FilePath, startTime + context.MusicSource.Latency + headGap, PlaySpeed);
+                SoundManager.Play(context.MusicSource.FilePath, startTime + context.MusicSource.Latency + headGap, PlaySpeed, Volume / 100.0);
             })
             .ContinueWith(p =>
             {
@@ -157,7 +175,7 @@ namespace Ched.UI
                 TickElement = TickElement.Next;
             }
 
-            SoundManager.Play(ClapSource.FilePath);
+            SoundManager.Play(ClapSource.FilePath, 0.0, 1.0, SfxVolume / 100.0);
         }
 
         private int GetLatencyTick(double latency, double bpm)
