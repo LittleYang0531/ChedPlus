@@ -392,7 +392,7 @@ namespace Ched.UI
             catch (InvalidTimeSignatureException ex)
             {
                 int beatAt = ex.Tick / ScoreBook.Score.TicksPerBeat + 1;
-                message = string.Format(ErrorStrings.InvalidTimeSignature, beatAt);
+                message = string.Format(ErrorStrings.InvalidTimeSignature, beatAt) + "\nDetailed Message: " + ex.Message;
             }
             catch (Exception ex)
             {
@@ -577,6 +577,15 @@ namespace Ched.UI
 
             commandSource.RegisterCommand(Commands.Undo, MainFormStrings.Undo, () => { if (OperationManager.CanUndo) OperationManager.Undo(); });
             commandSource.RegisterCommand(Commands.Redo, MainFormStrings.Redo, () => { if (OperationManager.CanRedo) OperationManager.Redo(); });
+            commandSource.RegisterCommand(Commands.Jump, MainFormStrings.Jump, () =>
+            {
+                var form = new TickSelectionForm();
+                if (form.ShowDialog(this) != DialogResult.OK) return;
+
+                var tick = form.Tick;
+                NoteView.JumpTick(tick);
+                NoteViewScrollBar.Value = -NoteView.HeadTick;
+            });
 
             commandSource.RegisterCommand(Commands.Cut, MainFormStrings.Cut, () => NoteView.CutSelectedNotes());
             commandSource.RegisterCommand(Commands.Copy, MainFormStrings.Copy, () => NoteView.CopySelectedNotes());
@@ -868,6 +877,7 @@ namespace Ched.UI
 
             var redoItem = shortcutItemBuilder.BuildItem(Commands.Redo, MainFormStrings.Redo);
             redoItem.Enabled = false;
+            var jumpItem = shortcutItemBuilder.BuildItem(Commands.Jump, MainFormStrings.Jump);
 
             var cutItem = shortcutItemBuilder.BuildItem(Commands.Cut, MainFormStrings.Cut);
             var copyItem = shortcutItemBuilder.BuildItem(Commands.Copy, MainFormStrings.Copy);
@@ -924,7 +934,7 @@ namespace Ched.UI
 
             var editMenuItems = new ToolStripItem[]
             {
-                undoItem, redoItem, new ToolStripSeparator(),
+                undoItem, redoItem, jumpItem, new ToolStripSeparator(),
                 cutItem, copyItem, pasteItem, pasteFlippedItem, new ToolStripSeparator(),
                 cutSelectedEvents, copySelectedEvents, pasteSelectedEvents, new ToolStripSeparator(),
                 selectAllItem, selectToEndItem, selectoToBeginningItem, new ToolStripSeparator(),

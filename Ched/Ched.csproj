@@ -363,6 +363,12 @@
     <Compile Include="UI\Shortcuts\ShortcutKeySource.cs" />
     <Compile Include="UI\Shortcuts\ShortcutManager.cs" />
     <Compile Include="UI\Shortcuts\ToolStripItemBuilder.cs" />
+    <Compile Include="UI\TickSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TickSelectionForm.Designer.cs">
+      <DependentUpon>TickSelectionForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\Behaviors\HideWindowCloseButtonBehavior.cs" />
     <Compile Include="UI\Windows\Behaviors\InitialFocusBehavior.cs" />
     <Compile Include="UI\Windows\Behaviors\OpenFileBehavior.cs" />
@@ -460,7 +466,9 @@
     <Compile Include="UI\Windows\ViewModel.cs" />
     <Compile Include="UI\Windows\WpfExtensions.cs" />
     <Compile Include="UI\Recording\RecorderInput.cs" />
-    <EmbeddedResource Include="Localization\ErrorStrings.en.resx" />
+    <EmbeddedResource Include="Localization\ErrorStrings.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Localization\ErrorStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
@@ -554,6 +562,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ShiftTimeSelectionForm.resx">
       <DependentUpon>ShiftTimeSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TickSelectionForm.en.resx">
+      <DependentUpon>TickSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TickSelectionForm.resx">
+      <DependentUpon>TickSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TickSelectionForm.zh.resx">
+      <DependentUpon>TickSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\TimeSignatureSelectionForm.en.resx">
       <DependentUpon>TimeSignatureSelectionForm.cs</DependentUpon>

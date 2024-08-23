@@ -339,11 +339,11 @@
   <data name="FollowWhenPlaying" xml:space="preserve">
     <value>播放时滚动游戏场</value>
   </data>
-  <data name="PlayAtHalfSpeed" xml:space="preserve">
-    <value>半速播放</value>
-  </data>
   <data name="SlideCurve" xml:space="preserve">
     <value>SLIDE(湾点)</value>
+  </data>
+  <data name="PlayAtHalfSpeed" xml:space="preserve">
+    <value>半速播放</value>
   </data>
   <data name="RecordAdd" xml:space="preserve">
     <value>记录(添加)</value>
@@ -386,5 +386,8 @@
   </data>
   <data name="Volume" xml:space="preserve">
     <value>背景乐音量</value>
+  </data>
+  <data name="Jump" xml:space="preserve">
+    <value>跳转至 Tick</value>
   </data>
 </root>

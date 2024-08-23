@@ -2078,6 +2078,13 @@ namespace Ched.UI
             g.DrawXorRectangle(PenStyles.Dot, g.Transform.TransformPoint(selectedRect.Location), g.Transform.TransformPoint(selectedRect.Location + selectedRect.Size));
         }
 
+        public void JumpTick(decimal tick)
+        {
+            CurrentTick = (int)tick;
+            HeadTick = (int)tick - 61;
+
+        }
+
         public Core.NoteCollection GetSelectedNotes()
         {
             int minTick = SelectedRange.StartTick + (SelectedRange.Duration < 0 ? SelectedRange.Duration : 0);

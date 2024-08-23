@@ -19,6 +19,7 @@ namespace Ched.UI.Shortcuts
 
         public static string Undo => "editor.action.undo";
         public static string Redo => "editor.action.redo";
+        public static string Jump => "editor.action.jump";
 
         public static string Cut => "editor.action.clipboardCut";
         public static string Copy => "editor.action.clipboardCopy";

@@ -403,6 +403,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Tick にジャンプ 的本地化字符串。
+        /// </summary>
+        public static string Jump {
+            get {
+                return ResourceManager.GetString("Jump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 ショートカット設定 的本地化字符串。
         /// </summary>
         public static string KeyboardShortcuts {

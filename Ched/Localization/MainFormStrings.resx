@@ -387,4 +387,7 @@
   <data name="Volume" xml:space="preserve">
     <value>BGM 音量</value>
   </data>
+  <data name="Jump" xml:space="preserve">
+    <value>Tick にジャンプ</value>
+  </data>
 </root>

@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 [assembly: AssemblyTitle("ChedPlus")]
 [assembly: AssemblyDescription("Yet Another Chart Editor Plus for World Dai Star")]
-[assembly: AssemblyCompany("stellarity.littleyang.me")]
+[assembly: AssemblyCompany("stellarity.littleyang.icu")]
 [assembly: AssemblyProduct("ChedPlus")]
 [assembly: AssemblyCopyright("Copyright (C) 2017-2021 Paralleltree, 2021 4yn, 2024 LittleYang0531")]
 

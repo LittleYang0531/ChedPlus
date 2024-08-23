@@ -387,4 +387,7 @@
   <data name="Volume" xml:space="preserve">
     <value>BGM Volume</value>
   </data>
+  <data name="Jump" xml:space="preserve">
+    <value>Jump to Tick</value>
+  </data>
 </root>
