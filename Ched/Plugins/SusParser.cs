@@ -255,7 +255,7 @@ namespace Sus2Image.Converter
                     break;
 
                 case "WAVEOFFSET":
-                    WaveOffset = int.Parse(value);
+                    WaveOffset = double.Parse(value);
                     break;
 
                 case "JACKET":
