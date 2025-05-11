@@ -12,7 +12,7 @@ namespace Ched.Core.Notes
         [Newtonsoft.Json.JsonProperty]
         private int startWidth = 1;
         [Newtonsoft.Json.JsonProperty]
-        private int startLaneIndex;
+        public int startLaneIndex;
         [Newtonsoft.Json.JsonProperty]
         private List<StepTap> stepNotes = new List<StepTap>();
 
@@ -43,7 +43,7 @@ namespace Ched.Core.Notes
         }
 
         public List<StepTap> StepNotes { get { return stepNotes; } }
-        public StartTap StartNote { get; }
+        public StartTap StartNote { get; set; }
 
         public Slide()
         {

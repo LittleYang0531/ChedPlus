@@ -12,6 +12,7 @@ namespace Ched.UI.Shortcuts
         public static string NewFile => "files.new";
         public static string OpenFile => "files.open";
         public static string Save => "files.save";
+        public static string AutoSave => "files.autoSave";
         public static string SaveAs => "files.saveAs";
         public static string ReExport => "files.reExport";
         public static string ShowScoreBookProperties => "editor.action.showScoreBookProperties";
@@ -42,6 +43,8 @@ namespace Ched.UI.Shortcuts
 
         public static string WidenLaneWidth => "editor.view.widenLaneWidth";
         public static string NarrowLaneWidth => "editor.view.narrowLaneWidth";
+
+        public static string ShowWaveForm => "editor.view.showWaveForm";
 
         public static string InsertBpmChange => "editor.action.insertBpmChange";
         public static string InsertTimeSignatureChange => "editor.action.insertTimeSignatureChange";

@@ -41,6 +41,22 @@ namespace Ched.Configuration
 
         [UserScopedSetting]
         [DefaultSettingValue("False")]
+        public bool AutoSave
+        {
+            get { return ((bool)(this["AutoSave"])); }
+            set { this["AutoSave"] = value; }
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("True")]
+        public bool IsShowWaveForm
+        {
+            get { return ((bool)(this["IsShowWaveForm"])); }
+            set { this["IsShowWaveForm"] = value; }
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("False")]
         public bool IsPreviewAbortAtLastNote
         {
             get { return ((bool)(this["IsPreviewAbortAtLastNote"])); }

@@ -8,6 +8,7 @@ namespace Ched.Core
 {
     public static class Constants
     {
-        public static int LanesCount = 16;
+        public static int LanesCount = 12;
+        public static int LanesOffset = 2;
     }
 }

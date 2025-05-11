@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Ched.Core;
 using Ched.Localization;
+using NAudio.Wave;
 using Newtonsoft.Json.Linq;
 
 namespace Ched.UI.Windows
@@ -27,6 +28,7 @@ namespace Ched.UI.Windows
     {
         private ScoreBook ScoreBook { get; } = new ScoreBook();
         private SoundSource MusicSource { get; set; } = new SoundSource();
+        private NoteView NoteView { get; set; }
 
         public string SoundSourceFilter { get; } = Helpers.GetFilterString(FileFilterStrings.AudioFilter, SoundSource.SupportedExtensions);
         public Action<string> SetMusicSourceFileAction => path => MusicSourcePath = path;
@@ -135,10 +137,11 @@ namespace Ched.UI.Windows
             Father = father;
         }
 
-        public BookPropertiesWindowViewModel(MainForm father, ScoreBook scoreBook, SoundSource musicSource)
+        public BookPropertiesWindowViewModel(MainForm father, ScoreBook scoreBook, NoteView noteView, SoundSource musicSource)
         {
             Father = father;
             ScoreBook = scoreBook;
+            NoteView = noteView;
             MusicSource = musicSource;
         }
 
@@ -168,8 +171,19 @@ namespace Ched.UI.Windows
             MusicSource.PreviewSpeed = PreviewSpeed;
             ScoreBook.Wave = MusicSourcePath;
             ScoreBook.WaveOffset = MusicSourceLatency;
+            NoteView.WaveOffset = MusicSourceLatency;
             MusicSource.Volume = Volume;
             MusicSource.SfxVolume = SfxVolume;
+
+            // 绘制波形图
+            var audioFileReader = new AudioFileReader(MusicSource.FilePath);
+            var datas = new byte[audioFileReader.Length];
+            audioFileReader.Read(datas, 0, (int)audioFileReader.Length);
+            var wavData = new float[datas.Length / sizeof(float)];
+            Buffer.BlockCopy(datas, 0, wavData, 0, datas.Length);
+            NoteView.WaveForm = wavData;
+            NoteView.WaveFormLength = audioFileReader.TotalTime.TotalSeconds;
+            NoteView.Invalidate();
         }
     }
 }

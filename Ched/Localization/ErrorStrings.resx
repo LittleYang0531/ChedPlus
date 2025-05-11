@@ -176,4 +176,7 @@
   <data name="SourceFileNotFound" xml:space="preserve">
     <value>音源ファイルが見つかりません。</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>波形を表示</value>
+  </data>
 </root>

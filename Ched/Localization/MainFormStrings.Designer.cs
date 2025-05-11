@@ -142,6 +142,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   查找类似 自動保存 的本地化字符串。
+        /// </summary>
+        public static string AutoSave {
+            get {
+                return ResourceManager.GetString("AutoSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 基本情報 的本地化字符串。
         /// </summary>
         public static string BasicInformation {
@@ -750,6 +759,15 @@ namespace Ched.Localization {
         public static string SfxVolume {
             get {
                 return ResourceManager.GetString("SfxVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 波形を表示 的本地化字符串。
+        /// </summary>
+        public static string ShowWaveForm {
+            get {
+                return ResourceManager.GetString("ShowWaveForm", resourceCulture);
             }
         }
         

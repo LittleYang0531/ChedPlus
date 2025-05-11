@@ -176,4 +176,7 @@ Select "Yes" to upgrade this file.
   <data name="SourceFileNotFound" xml:space="preserve">
     <value>The audio file was not found.</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>Show Waveform</value>
+  </data>
 </root>

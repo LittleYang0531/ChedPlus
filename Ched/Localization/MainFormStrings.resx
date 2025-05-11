@@ -390,4 +390,10 @@
   <data name="Jump" xml:space="preserve">
     <value>Tick にジャンプ</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>波形を表示</value>
+  </data>
+  <data name="AutoSave" xml:space="preserve">
+    <value>自動保存</value>
+  </data>
 </root>

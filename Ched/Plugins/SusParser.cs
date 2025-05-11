@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ched.Core.Events;
+using Ched.Core;
 
 namespace Sus2Image.Converter
 {
@@ -121,7 +122,7 @@ namespace Sus2Image.Converter
                             DiagnosticCollector.ReportWarning("Invalid Split Line Parameter: " + exp[i]);
                             continue;
                         }
-                        while (tmp3[1].Length < 5) tmp3[1] += '0';
+                        while (tmp3[1].Length < 5) tmp3[1] = "0" + tmp3[1];
                         int tick = int.Parse(tmp2[0]) * TicksPerBeat * 4 + int.Parse(tmp2[1]);
                         SplitLineChangeEvent e = new SplitLineChangeEvent();
                         e.Tick = tick; e.LineNumber = int.Parse(tmp3[0]);
@@ -163,7 +164,7 @@ namespace Sus2Image.Converter
             {
                 return SplitData(barIndexCalculator, q.LineIndex, int.Parse(q.Value.Groups["barIndex"].Value) + q.BarIndexOffset, q.Value.Groups["data"].Value)
                     .Where(r => Regex.IsMatch(r.Data, "[1-9][1-9a-g]", RegexOptions.IgnoreCase))
-                    .Select(r => new NoteDefinition() { LineIndex = q.LineIndex, Type = r.Data[0], Position = new NotePosition() { Tick = r.Tick, LaneIndex = ConvertHex(q.Value.Groups["laneIndex"].Value[0]), Width = ConvertHex(r.Data[1]) } });
+                    .Select(r => new NoteDefinition() { LineIndex = q.LineIndex, Type = r.Data[0], Position = new NotePosition() { Tick = r.Tick, LaneIndex = ConvertHex(q.Value.Groups["laneIndex"].Value[0]) - Constants.LanesOffset, Width = ConvertHex(r.Data[1]) } });
             }).ToList());
 
             // ロング種別 -> ロングノーツリスト -> 構成点リスト
@@ -173,7 +174,7 @@ namespace Sus2Image.Converter
                 {
                     return SplitData(barIndexCalculator, r.LineIndex, int.Parse(r.Value.Groups["barIndex"].Value) + r.BarIndexOffset, r.Value.Groups["data"].Value)
                         .Where(s => Regex.IsMatch(s.Data, "[1-5][1-9a-g]", RegexOptions.IgnoreCase))
-                        .Select(s => new NoteDefinition() { LineIndex = r.LineIndex, Type = s.Data[0], Position = new NotePosition() { Tick = s.Tick, LaneIndex = ConvertHex(r.Value.Groups["laneIndex"].Value[0]), Width = ConvertHex(s.Data[1]) } });
+                        .Select(s => new NoteDefinition() { LineIndex = r.LineIndex, Type = s.Data[0], Position = new NotePosition() { Tick = s.Tick, LaneIndex = ConvertHex(r.Value.Groups["laneIndex"].Value[0]) - Constants.LanesOffset, Width = ConvertHex(s.Data[1]) } });
                 }))
                 .SelectMany(q => p.Key == '2' ? q.GroupBy(r => r.Position.LaneIndex).SelectMany(r => FlatSplitLongNotes(r, '1', '2')) : FlatSplitLongNotes(q, '1', '2'))
                 .ToList();

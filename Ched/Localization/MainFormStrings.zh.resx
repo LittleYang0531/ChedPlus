@@ -390,4 +390,10 @@
   <data name="Jump" xml:space="preserve">
     <value>跳转至 Tick</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>显示波形图</value>
+  </data>
+  <data name="AutoSave" xml:space="preserve">
+    <value>自动保存</value>
+  </data>
 </root>

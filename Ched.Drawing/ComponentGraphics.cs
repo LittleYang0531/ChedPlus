@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ched.Core.Events;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -76,7 +77,6 @@ namespace Ched.Drawing
                 g.DrawLine(pen, rect.Left + rect.Width * 0.2f, rect.Top + rect.Height / 2f, rect.Right - rect.Width * 0.2f, rect.Top + rect.Height / 2);
             }
         }
-
 
         private static Dictionary<Tuple<GradientColor, float>, Color> memoInterpolateColors = new Dictionary<Tuple<GradientColor, float>, Color> { };
         private static Color InterpolateColors(GradientColor colors, float progress)

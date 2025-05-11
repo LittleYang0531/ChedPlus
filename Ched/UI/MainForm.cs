@@ -22,6 +22,7 @@ using Ched.UI.Shortcuts;
 using Ched.UI.Operations;
 using Ched.UI.Windows;
 using Ched.UI.Recording;
+using NAudio.Wave;
 
 namespace Ched.UI
 {
@@ -76,6 +77,8 @@ namespace Ched.UI
         private bool CanZoomOut => !IsPreviewMode && NoteView.UnitBeatHeight > 30;
         private bool CanEdit => !IsPreviewMode && !PreviewManager.Playing;
 
+        private bool AutoSave { get; set; } = false;
+
         public MainForm()
         {
 #if DEBUG
@@ -96,6 +99,7 @@ namespace Ched.UI
             {
                 SetText(ScoreBook.Path);
                 NoteView.Invalidate();
+                if (AutoSave) SaveFile();
             };
             OperationManager.ChangesCommitted += (s, e) => SetText(ScoreBook.Path);
 
@@ -108,7 +112,9 @@ namespace Ched.UI
                 InsertAirWithAirAction = ApplicationSettings.Default.InsertAirWithAirAction,
                 IsFollowWhenPlaying = ApplicationSettings.Default.IsFollowWhenPlaying,
                 IsReturnWhenPlayFinished = ApplicationSettings.Default.IsReturnWhenPlayFinished,
-                Recorder = Recorder
+                Recorder = Recorder,
+                WaveForm = new float[0],
+                WaveFormLength = 1
             };
 
             PreviewManager = new SoundPreviewManager(this);
@@ -147,9 +153,45 @@ namespace Ched.UI
 
             NoteView.MouseWheel += (s, e) =>
             {
-                int value = NoteViewScrollBar.Value - e.Delta / 120 * NoteViewScrollBar.SmallChange;
-                NoteViewScrollBar.Value = Math.Min(Math.Max(value, NoteViewScrollBar.Minimum), NoteViewScrollBar.GetMaximumValue());
-                processScrollBarRangeExtension(NoteViewScrollBar);
+                // 添加 Ctrl/Alt + MonseWheel 调整 Form 大小功能
+                if ((int)Control.ModifierKeys == (int)Keys.Control)
+                {
+                    if (e.Delta > 0)
+                    {
+                        if (!CanZoomIn) return;
+                        NoteView.UnitBeatHeight *= 1.1f;
+                        ApplicationSettings.Default.UnitBeatHeight = (int)NoteView.UnitBeatHeight;
+                        UpdateThumbHeight();
+                    } 
+                    else
+                    {
+                        if (!CanZoomOut) return;
+                        NoteView.UnitBeatHeight /= 1.1f;
+                        ApplicationSettings.Default.UnitBeatHeight = (int)NoteView.UnitBeatHeight;
+                        UpdateThumbHeight();
+                    }
+                }
+                else if ((int)Control.ModifierKeys == (int)Keys.Alt)
+                {
+                    if (e.Delta > 0)
+                    {
+                        if (!CanWidenLaneWidth) return;
+                        NoteView.UnitLaneWidth += 4;
+                        ApplicationSettings.Default.UnitLaneWidth = NoteView.UnitLaneWidth;
+                    }
+                    else
+                    {
+                        if (!CanNarrowLaneWidth) return;
+                        NoteView.UnitLaneWidth -= 4;
+                        ApplicationSettings.Default.UnitLaneWidth = NoteView.UnitLaneWidth;
+                    }
+                }
+                else
+                {
+                    int value = NoteViewScrollBar.Value - e.Delta / 120 * NoteViewScrollBar.SmallChange;
+                    NoteViewScrollBar.Value = Math.Min(Math.Max(value, NoteViewScrollBar.Minimum), NoteViewScrollBar.GetMaximumValue());
+                    processScrollBarRangeExtension(NoteViewScrollBar);
+                }
             };
 
             NoteView.DragScroll += (s, e) =>
@@ -298,6 +340,22 @@ namespace Ched.UI
                 CurrentMusicSource.PreviewSpeed = 1.0;
             }
             Recorder.Clear();
+
+            CurrentMusicSource.FilePath = book.Wave;
+            CurrentMusicSource.Latency = book.WaveOffset;
+
+            // 绘制波形图
+            if (CurrentMusicSource.FilePath != "")
+            {
+                var audioFileReader = new AudioFileReader(CurrentMusicSource.FilePath);
+                var datas = new byte[audioFileReader.Length];
+                audioFileReader.Read(datas, 0, (int)audioFileReader.Length);
+                var wavData = new float[datas.Length / sizeof(float)];
+                Buffer.BlockCopy(datas, 0, wavData, 0, datas.Length);
+                NoteView.WaveForm = wavData;
+                NoteView.WaveFormLength = audioFileReader.TotalTime.TotalSeconds;
+                NoteView.Invalidate();
+            }
         }
 
         protected void LoadEmptyBook()
@@ -569,7 +627,7 @@ namespace Ched.UI
             });
             commandSource.RegisterCommand(Commands.ShowScoreBookProperties, MainFormStrings.BookProperty, () =>
             {
-                var vm = new BookPropertiesWindowViewModel(this, ScoreBook, CurrentMusicSource);
+                var vm = new BookPropertiesWindowViewModel(this, ScoreBook, NoteView, CurrentMusicSource);
                 var window = new BookPropertiesWindow() { DataContext = vm };
                 window.ShowDialog(this);
             });
@@ -721,26 +779,26 @@ namespace Ched.UI
             });
 
             commandSource.RegisterCommand(Commands.SelectTap, "TAP", () => NoteView.NewNoteType = NoteType.Tap);
-            commandSource.RegisterCommand(Commands.SelectExTap, "ExTAP", () => HandleExTapDirection());
-            commandSource.RegisterCommand(Commands.SelectHold, "HOLD", () => NoteView.NewNoteType = NoteType.Hold);
-            commandSource.RegisterCommand(Commands.SelectSlide, "SLIDE", () =>
-            {
-                NoteView.NewNoteType = NoteType.Slide;
-                NoteView.IsNewSlideStepVisible = false;
-                NoteView.IsNewSlideStepCurve = false;
-            });
+            commandSource.RegisterCommand(Commands.SelectExTap, "ExTAP", () => NoteView.NewNoteType = NoteType.ExTap);
+            //commandSource.RegisterCommand(Commands.SelectHold, "HOLD", () => NoteView.NewNoteType = NoteType.Hold);
+            //commandSource.RegisterCommand(Commands.SelectSlide, "SLIDE", () =>
+            //{
+            //    NoteView.NewNoteType = NoteType.Slide;
+            //    NoteView.IsNewSlideStepVisible = false;
+            //    NoteView.IsNewSlideStepCurve = false;
+            //});
             commandSource.RegisterCommand(Commands.SelectSlideStep, MainFormStrings.SlideStep, () =>
             {
                 NoteView.NewNoteType = NoteType.Slide;
                 NoteView.IsNewSlideStepVisible = true;
                 NoteView.IsNewSlideStepCurve = false;
             });
-            commandSource.RegisterCommand(Commands.SelectSlideCurve, MainFormStrings.SlideCurve, () =>
-            {
-                NoteView.NewNoteType = NoteType.Slide;
-                NoteView.IsNewSlideStepVisible = false;
-                NoteView.IsNewSlideStepCurve = true;
-            });
+            //commandSource.RegisterCommand(Commands.SelectSlideCurve, MainFormStrings.SlideCurve, () =>
+            //{
+            //    NoteView.NewNoteType = NoteType.Slide;
+            //    NoteView.IsNewSlideStepVisible = false;
+            //    NoteView.IsNewSlideStepCurve = true;
+            //});
             commandSource.RegisterCommand(Commands.SelectAir, "AIR", () =>
             {
                 if (NoteView.NewNoteType != NoteType.Air)
@@ -758,8 +816,8 @@ namespace Ched.UI
                 HandleHorizontalAirDirection(NoteView.AirDirection.VerticalDirection);
             });
             commandSource.RegisterCommand(Commands.SelectAirUp, MainFormStrings.AirUp, () => HandleHorizontalAirDirection(VerticalAirDirection.Up));
-            commandSource.RegisterCommand(Commands.SelectAirDown, MainFormStrings.AirDown, () => HandleHorizontalAirDirection(VerticalAirDirection.Down));
-            commandSource.RegisterCommand(Commands.SelectAirAction, "AIR-ACTION", () => NoteView.NewNoteType = NoteType.AirAction);
+            //commandSource.RegisterCommand(Commands.SelectAirDown, MainFormStrings.AirDown, () => HandleHorizontalAirDirection(VerticalAirDirection.Down));
+            //commandSource.RegisterCommand(Commands.SelectAirAction, "AIR-ACTION", () => NoteView.NewNoteType = NoteType.AirAction);
             commandSource.RegisterCommand(Commands.SelectFlick, "FLICK", () => NoteView.NewNoteType = NoteType.Flick);
             commandSource.RegisterCommand(Commands.SelectDamage, "DAMAGE", () => NoteView.NewNoteType = NoteType.Damage);
 
@@ -789,31 +847,6 @@ namespace Ched.UI
 
                     case HorizontalAirDirection.Left:
                         return HorizontalAirDirection.Center;
-                }
-                throw new ArgumentException();
-            }
-
-            void HandleExTapDirection()
-            {
-                if (NoteView.NewNoteType != NoteType.ExTap)
-                {
-                    NoteView.NewNoteType = NoteType.ExTap;
-                    NoteView.ExTapDirection = ExTapDirection.None;
-                    return;
-                }
-                NoteView.ExTapDirection = GetNextExTapDirection(NoteView.ExTapDirection);
-            }
-
-            ExTapDirection GetNextExTapDirection(ExTapDirection direction)
-            {
-                switch (direction)
-                {
-                    case ExTapDirection.None:
-                        return ExTapDirection.Down;
-                    case ExTapDirection.Down:
-                        return ExTapDirection.Center;
-                    case ExTapDirection.Center:
-                        return ExTapDirection.None;
                 }
                 throw new ArgumentException();
             }
@@ -861,6 +894,15 @@ namespace Ched.UI
                 shortcutItemBuilder.BuildItem(Commands.OpenFile, MainFormStrings.OpenFile + "(&O)"),
                 shortcutItemBuilder.BuildItem(Commands.Save, MainFormStrings.SaveFile + "(&S)"),
                 shortcutItemBuilder.BuildItem(Commands.SaveAs, MainFormStrings.SaveAs + "(&A)"),
+                new ToolStripMenuItem(MainFormStrings.AutoSave, null, (s, e) =>
+                {
+                    var item = s as ToolStripMenuItem;
+                    item.Checked = !item.Checked;
+                    AutoSave = item.Checked;
+                    ApplicationSettings.Default.AutoSave = item.Checked;
+                }){
+                    Checked = ApplicationSettings.Default.AutoSave
+                },
                 new ToolStripSeparator(),
                 new ToolStripMenuItem(MainFormStrings.Import, null, importPluginItems) { Enabled = importPluginItems.Length > 0 },
                 new ToolStripMenuItem(MainFormStrings.Export, null, exportPluginItems) { Enabled = exportPluginItems.Length > 0 },
@@ -949,6 +991,18 @@ namespace Ched.UI
             var widenLaneWidthMenuItem = shortcutItemBuilder.BuildItem(Commands.WidenLaneWidth, MainFormStrings.WidenLaneWidth);
             var narrowLaneWidthMenuItem = shortcutItemBuilder.BuildItem(Commands.NarrowLaneWidth, MainFormStrings.NarrowLaneWidth);
 
+            var showWaveForm = new ToolStripMenuItem(MainFormStrings.ShowWaveForm, null, (s, e) =>
+            {
+                var item = s as ToolStripMenuItem;
+                item.Checked = !item.Checked;
+                noteView.IsShowWaveForm = item.Checked;
+                ApplicationSettings.Default.IsShowWaveForm = item.Checked;
+                NoteView.Invalidate();
+            })
+            {
+                Checked = ApplicationSettings.Default.IsShowWaveForm
+            };
+
             NoteView.UnitLaneWidthChanged += (s, e) =>
             {
                 widenLaneWidthMenuItem.Enabled = CanWidenLaneWidth;
@@ -959,7 +1013,9 @@ namespace Ched.UI
             {
                 viewModeItem,
                 new ToolStripSeparator(),
-                widenLaneWidthMenuItem, narrowLaneWidthMenuItem
+                widenLaneWidthMenuItem, narrowLaneWidthMenuItem,
+                new ToolStripSeparator(),
+                showWaveForm
             };
 
 
@@ -1223,26 +1279,26 @@ namespace Ched.UI
 
             var tapButton = shortcutItemBuilder.BuildItem(Commands.SelectTap, "TAP", Resources.TapIcon);
 
-            //var exTapButton = shortcutItemBuilder.BuildItem(Commands.SelectExTap, "ExTAP", Resources.ExTapIcon);
-            var exTapKind = new CheckableToolStripSplitButton()
-            {
-                DisplayStyle = ToolStripItemDisplayStyle.Image
-            };
-            exTapKind.Text = "ExTAP";
-            exTapKind.Click += (s, e) => noteView.NewNoteType = NoteType.ExTap;
-            exTapKind.DropDown.Items.AddRange(new ToolStripItem[]
-            {
-                new ToolStripMenuItem("ExTAP", Resources.ExTapIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.None),
-                new ToolStripMenuItem("ExTAP DOWN", Resources.ExTapDownIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.Down),
-                new ToolStripMenuItem("ExTAP CENTER", Resources.ExTapCenterIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.Center),
-            });
-            exTapKind.Image = Resources.ExTapIcon;
+            var exTapButton = shortcutItemBuilder.BuildItem(Commands.SelectExTap, "ExTAP", Resources.ExTapIcon);
+            //var exTapKind = new CheckableToolStripSplitButton()
+            //{
+            //    DisplayStyle = ToolStripItemDisplayStyle.Image
+            //};
+            //exTapKind.Text = "ExTAP";
+            //exTapKind.Click += (s, e) => noteView.NewNoteType = NoteType.ExTap;
+            //exTapKind.DropDown.Items.AddRange(new ToolStripItem[]
+            //{
+            //    new ToolStripMenuItem("ExTAP", Resources.ExTapIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.None),
+            //    new ToolStripMenuItem("ExTAP DOWN", Resources.ExTapDownIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.Down),
+            //    new ToolStripMenuItem("ExTAP CENTER", Resources.ExTapCenterIcon, (s, e) => noteView.ExTapDirection = ExTapDirection.Center),
+            //});
+            //exTapKind.Image = Resources.ExTapIcon;
 
-            var holdButton = shortcutItemBuilder.BuildItem(Commands.SelectHold, "HOLD", Resources.HoldIcon);
-            var slideButton = shortcutItemBuilder.BuildItem(Commands.SelectSlide, "SLIDE", Resources.SlideIcon);
+            //var holdButton = shortcutItemBuilder.BuildItem(Commands.SelectHold, "HOLD", Resources.HoldIcon);
+            //var slideButton = shortcutItemBuilder.BuildItem(Commands.SelectSlide, "SLIDE", Resources.SlideIcon);
             var slideStepButton = shortcutItemBuilder.BuildItem(Commands.SelectSlideStep, MainFormStrings.SlideStep, Resources.SlideStepIcon);
-            var slideCurveButton = shortcutItemBuilder.BuildItem(Commands.SelectSlideCurve, MainFormStrings.SlideCurve, Resources.SlideCurveIcon);
-            var airActionButton = shortcutItemBuilder.BuildItem(Commands.SelectAirAction, "AIR-ACTION", Resources.AirActionIcon);
+            //var slideCurveButton = shortcutItemBuilder.BuildItem(Commands.SelectSlideCurve, MainFormStrings.SlideCurve, Resources.SlideCurveIcon);
+            //var airActionButton = shortcutItemBuilder.BuildItem(Commands.SelectAirAction, "AIR-ACTION", Resources.AirActionIcon);
             var flickButton = shortcutItemBuilder.BuildItem(Commands.SelectFlick, "FLICK", Resources.FlickIcon);
             var damageButton = shortcutItemBuilder.BuildItem(Commands.SelectDamage, "DAMAGE", Resources.DamgeIcon);
 
@@ -1250,16 +1306,16 @@ namespace Ched.UI
             {
                 DisplayStyle = ToolStripItemDisplayStyle.Image
             };
-            airKind.Text = "AIR (A/D)";
+            airKind.Text = "AIR (A)";
             airKind.Click += (s, e) => noteView.NewNoteType = NoteType.Air;
             airKind.DropDown.Items.AddRange(new ToolStripItem[]
             {
                 new ToolStripMenuItem(MainFormStrings.AirUp, Resources.AirUpIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Up, HorizontalAirDirection.Center)),
                 new ToolStripMenuItem(MainFormStrings.AirLeftUp, Resources.AirLeftUpIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Up, HorizontalAirDirection.Left)),
                 new ToolStripMenuItem(MainFormStrings.AirRightUp, Resources.AirRightUpIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Up, HorizontalAirDirection.Right)),
-                new ToolStripMenuItem(MainFormStrings.AirDown, Resources.AirDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Center)),
-                new ToolStripMenuItem(MainFormStrings.AirLeftDown, Resources.AirLeftDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Left)),
-                new ToolStripMenuItem(MainFormStrings.AirRightDown, Resources.AirRightDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Right))
+                //new ToolStripMenuItem(MainFormStrings.AirDown, Resources.AirDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Center)),
+                //new ToolStripMenuItem(MainFormStrings.AirLeftDown, Resources.AirLeftDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Left)),
+                //new ToolStripMenuItem(MainFormStrings.AirRightDown, Resources.AirRightDownIcon, (s, e) => noteView.AirDirection = new AirDirection(VerticalAirDirection.Down, HorizontalAirDirection.Right))
             });
             airKind.Image = Resources.AirUpIcon;
             ShortcutManager.ShortcutUpdated += (s, e) =>
@@ -1326,13 +1382,13 @@ namespace Ched.UI
             noteView.NewNoteTypeChanged += (s, e) =>
             {
                 tapButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Tap);
-                exTapKind.Checked = noteView.NewNoteType.HasFlag(NoteType.ExTap);
-                holdButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Hold);
-                slideButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Slide) && !noteView.IsNewSlideStepVisible && !noteView.IsNewSlideStepCurve;
+                exTapButton.Checked = noteView.NewNoteType.HasFlag(NoteType.ExTap);
+                //holdButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Hold);
+                //slideButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Slide) && !noteView.IsNewSlideStepVisible && !noteView.IsNewSlideStepCurve;
                 slideStepButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Slide) && noteView.IsNewSlideStepVisible && !noteView.IsNewSlideStepCurve;
-                slideCurveButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Slide) && !noteView.IsNewSlideStepVisible && noteView.IsNewSlideStepCurve;
+                //slideCurveButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Slide) && !noteView.IsNewSlideStepVisible && noteView.IsNewSlideStepCurve;
                 airKind.Checked = noteView.NewNoteType.HasFlag(NoteType.Air);
-                airActionButton.Checked = noteView.NewNoteType.HasFlag(NoteType.AirAction);
+                //airActionButton.Checked = noteView.NewNoteType.HasFlag(NoteType.AirAction);
                 flickButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Flick);
                 damageButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Damage);
             };
@@ -1355,27 +1411,27 @@ namespace Ched.UI
                 }
             };
 
-            noteView.ExTapDirectionChanged += (s, e) =>
-            {
-                switch (noteView.ExTapDirection)
-                {
-                    case ExTapDirection.None:
-                        exTapKind.Image = Resources.ExTapIcon;
-                        break;
+            //noteView.ExTapDirectionChanged += (s, e) =>
+            //{
+            //    switch (noteView.ExTapDirection)
+            //    {
+            //        case ExTapDirection.None:
+            //            exTapKind.Image = Resources.ExTapIcon;
+            //            break;
 
-                    case ExTapDirection.Down:
-                        exTapKind.Image = Resources.ExTapDownIcon;
-                        break;
+            //        case ExTapDirection.Down:
+            //            exTapKind.Image = Resources.ExTapDownIcon;
+            //            break;
 
-                    case ExTapDirection.Center:
-                        exTapKind.Image = Resources.ExTapCenterIcon;
-                        break;
-                }
-            };
+            //        case ExTapDirection.Center:
+            //            exTapKind.Image = Resources.ExTapCenterIcon;
+            //            break;
+            //    }
+            //};
 
             return new ToolStrip(new ToolStripItem[]
             {
-                tapButton, exTapKind, holdButton, slideButton, slideStepButton, slideCurveButton, airKind, airActionButton, flickButton, damageButton,
+                tapButton, exTapButton, slideStepButton, airKind, flickButton, damageButton,
                 quantizeComboBox, previewSpeedBox
             });
         }

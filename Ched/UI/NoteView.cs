@@ -58,6 +58,7 @@ namespace Ched.UI
         private bool isFollowWhenPlaying = false;
         private bool isReturnWhenPlayFinished = false;
         private bool isShowRecorder = false;
+        private bool isShowWaveForm = true;
 
         /// <summary>
         /// 小節の区切り線の色を設定します。
@@ -356,6 +357,19 @@ namespace Ched.UI
             }
         }
 
+        public bool IsShowWaveForm
+        {
+            get { return isShowWaveForm; }
+            set
+            {
+                isShowWaveForm = value;
+                Invalidate();
+            }
+        }
+
+        public float[] WaveForm { get; set; }
+        public double WaveFormLength { get; set; }
+
         /// <summary>
         /// 追加するAIRの方向を設定します。
         /// </summary>
@@ -399,6 +413,8 @@ namespace Ched.UI
         public NoteCollection Notes { get; private set; } = new NoteCollection(new Core.NoteCollection());
 
         public EventCollection ScoreEvents { get; set; } = new EventCollection();
+
+        public double WaveOffset { get; set; } = 0;
 
         protected OperationManager OperationManager { get; }
 
@@ -647,7 +663,6 @@ namespace Ched.UI
                                 LastWidth = note.Width;
                             });
                     }
-
 
                     IObservable<MouseEventArgs> shortNoteHandler(TappableBase note)
                     {
@@ -1659,7 +1674,6 @@ namespace Ched.UI
                 }
             }
 
-
             // 時間ガイドの描画
             // そのイベントが含まれる小節(ただし[小節開始Tick, 小節開始Tick + 小節Tick)の範囲)からその拍子を適用
             var sigs = ScoreEvents.TimeSignatureChangeEvents.OrderBy(p => p.Tick).ToList();
@@ -1694,6 +1708,51 @@ namespace Ched.UI
                         pe.Graphics.DrawLine(i % sigs[j].Numerator == 0 ? barPen : beatPen, 0, y, laneWidth, y);
                     }
                 }
+            }
+
+            // WaveForm 绘制
+            if (IsShowWaveForm)
+            {
+                double TickToTime(int tick)
+                {
+                    var es = ScoreEvents.BpmChangeEvents;
+                    es.Add(new BpmChangeEvent());
+                    es.Last().Tick = int.MaxValue;
+                    double res = WaveOffset;
+                    for (var i = 1; i < es.Count; i++)
+                    {
+                        if (es[i].Tick >= tick)
+                        {
+                            res += ((double)(tick - es[i - 1].Tick) / (double)UnitBeatTick) / (es[i - 1].Bpm / 60);
+                        }
+                        else
+                        {
+                            res += (((double)es[i].Tick - es[i - 1].Tick) / (double)UnitBeatTick) / (es[i - 1].Bpm / 60);
+                        }
+                    }
+                    es.RemoveAt(es.Count - 1);
+                    return res;
+                }
+                using (var pen = new Pen(Color.FromArgb(127, 0, 196, 0), BorderThickness))
+                {
+                    for (var i = HeadTick; i <= TailTick; i++)
+                    {
+                        var t = TickToTime(i);
+                        var p = t / WaveFormLength;
+                        if (p > 1 || WaveForm.Length == 0) break;
+                        if (p < 0) continue;
+                        var val = WaveForm[(int)(p * WaveForm.Length)];
+                        val += (val > 0 ? 1 : -1) * (float)BorderThickness / 2 / ((UnitLaneWidth + BorderThickness) * Constants.LanesCount / 4);
+                        var y = GetYPositionFromTick(i);
+                        var x1 = (UnitLaneWidth + BorderThickness) * Constants.LanesCount / 2 - val * (UnitLaneWidth + BorderThickness) * Constants.LanesCount / 4;
+                        var x2 = (UnitLaneWidth + BorderThickness) * Constants.LanesCount / 2 + val * (UnitLaneWidth + BorderThickness) * Constants.LanesCount / 4;
+                        pe.Graphics.DrawLine(pen, x1, y, x2, y);
+                    }
+                }
+
+                //Console.WriteLine($"音频数据长度: {WaveForm.Length}");
+                //Console.WriteLine($"音频长度: {WaveFormLength}");
+                //Console.WriteLine(UnitBeatTick);
             }
 
             // Draw recorder output here

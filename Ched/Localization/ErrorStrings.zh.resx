@@ -176,4 +176,7 @@
   <data name="SourceFileNotFound" xml:space="preserve">
     <value>无法找到音源文件。</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>显示波形图</value>
+  </data>
 </root>

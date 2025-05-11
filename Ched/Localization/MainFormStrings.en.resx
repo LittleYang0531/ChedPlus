@@ -390,4 +390,10 @@
   <data name="Jump" xml:space="preserve">
     <value>Jump to Tick</value>
   </data>
+  <data name="ShowWaveForm" xml:space="preserve">
+    <value>Show Waveform</value>
+  </data>
+  <data name="AutoSave" xml:space="preserve">
+    <value>Auto Save</value>
+  </data>
 </root>

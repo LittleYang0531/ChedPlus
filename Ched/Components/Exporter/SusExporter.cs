@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using ConcurrentPriorityQueue;
 using Ched.Core;
 using Ched.Core.Notes;
+using System.Windows.Controls;
 
 namespace Ched.Components.Exporter
 {
@@ -293,7 +294,7 @@ namespace Ched.Components.Exporter
         {
             foreach (var itemsInBar in items.Select(p => new { BarPosition = BarIndexCalculator.GetBarPositionFromTick(p.Tick), Item = p }).GroupBy(p => p.BarPosition.BarIndex))
             {
-                foreach (var itemsInLane in itemsInBar.GroupBy(p => p.Item.LaneIndex))
+                foreach (var itemsInLane in itemsInBar.GroupBy(p => p.Item.LaneIndex + Constants.LanesOffset))
                 {
                     var sig = BarIndexCalculator.GetTimeSignatureFromBarIndex(itemsInBar.Key);
                     int barLength = StandardBarTick * sig.Numerator / sig.Denominator;
@@ -314,7 +315,7 @@ namespace Ched.Components.Exporter
         {
             foreach (var itemsInBar in elements.Select(p => new { BarPosition = BarIndexCalculator.GetBarPositionFromTick(p.Tick), Item = p }).GroupBy(p => p.BarPosition.BarIndex))
             {
-                foreach (var itemsInLane in itemsInBar.GroupBy(p => p.Item.LaneIndex))
+                foreach (var itemsInLane in itemsInBar.GroupBy(p => p.Item.LaneIndex + Constants.LanesOffset))
                 {
                     var sig = BarIndexCalculator.GetTimeSignatureFromBarIndex(itemsInBar.Key);
                     int barLength = StandardBarTick * sig.Numerator / sig.Denominator;

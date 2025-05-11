@@ -2,11 +2,18 @@
 
 [Ched](https://github.com/4yn/Ched) designed for World Dai Star(Stellarity). Respect [@paralleltree](https://twitter.com/paralleltree) and [@4yn](https://github.com/4yn). Download [here](https://github.com/LittleYang0531/ChedPlus/releases)
 
-- Added Split Line Event
+- Added Split Line Event.
 - Added IsReturnWhenPlayFinished Option.
 - Added CopyEvents / CutEvents / PasteEvents Options.
 - Added PreviewSpeed Option in BookProperty.
-- Remove PlayAtHalfSpeed Option.
+- Removed PlayAtHalfSpeed Option.
+- Added Ctrl + MouseWheel to Zoom In / Out.
+- Added Alt + MouseWheel to Adjust Lane Width.
+- Removed Unused Notes.
+- Updated Default Shoutcut for Notes.
+- Change Lane Count from 16 to 12.
+- Added Wave Form Preview.
+- Added AutoSave.
 
 # Original ChedPlus Readme
 

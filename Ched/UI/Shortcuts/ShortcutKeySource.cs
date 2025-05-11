@@ -172,16 +172,16 @@ namespace Ched.UI.Shortcuts
             RegisterShortcut(Commands.SelectEraser, Keys.E);
 
             RegisterShortcut(Commands.SelectTap, Keys.T);
-            RegisterShortcut(Commands.SelectExTap, Keys.Y);
-            RegisterShortcut(Commands.SelectHold, Keys.H);
-            RegisterShortcut(Commands.SelectSlide, Keys.S);
-            RegisterShortcut(Commands.SelectSlideStep, Keys.X);
-            RegisterShortcut(Commands.SelectSlideCurve, Keys.C);
+            RegisterShortcut(Commands.SelectExTap, Keys.C);
+            //RegisterShortcut(Commands.SelectHold, Keys.H);
+            //RegisterShortcut(Commands.SelectSlide, Keys.S);
+            RegisterShortcut(Commands.SelectSlideStep, Keys.S);
+            //RegisterShortcut(Commands.SelectSlideCurve, Keys.C);
             RegisterShortcut(Commands.SelectAirUp, Keys.A);
-            RegisterShortcut(Commands.SelectAirDown, Keys.D);
-            RegisterShortcut(Commands.SelectAirAction, Keys.Z);
+            //RegisterShortcut(Commands.SelectAirDown, Keys.D);
+            //RegisterShortcut(Commands.SelectAirAction, Keys.Z);
             RegisterShortcut(Commands.SelectFlick, Keys.F);
-            RegisterShortcut(Commands.SelectDamage, Keys.V);
+            RegisterShortcut(Commands.SelectDamage, Keys.D);
 
             RegisterShortcut(Commands.SeekForward, Keys.D3);
             RegisterShortcut(Commands.SeekFastForward, Keys.D4);

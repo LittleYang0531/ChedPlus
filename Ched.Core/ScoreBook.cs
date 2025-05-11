@@ -229,11 +229,21 @@ namespace Ched.Core
 
             var res = doc.ToObject<ScoreBook>(JsonSerializer.Create(SerializerSettings));
 
+            if (fileVersion.Major < 4)
+            {
+                foreach (var note in res.Score.Notes.Taps) note.LaneIndex -= Constants.LanesOffset;
+                foreach (var note in res.Score.Notes.ExTaps) note.LaneIndex -= Constants.LanesOffset;
+                foreach (var note in res.Score.Notes.Slides) note.startLaneIndex -= Constants.LanesOffset;
+                foreach (var note in res.Score.Notes.Flicks) note.LaneIndex -= Constants.LanesOffset;
+                foreach (var note in res.Score.Notes.Damages) note.LaneIndex -= Constants.LanesOffset;
+            }
+
             if (res.Score.Events.TimeSignatureChangeEvents.Count == 0)
             {
                 res.Score.Events.TimeSignatureChangeEvents.Add(new Events.TimeSignatureChangeEvent() { Tick = 0, Numerator = 4, DenominatorExponent = 2 });
             }
 
+            res.version = CurrentVersion;
             res.Path = path;
             return res;
         }
@@ -245,6 +255,7 @@ namespace Ched.Core
         /// <returns>互換性があればtrue, 互換性がなければfalse</returns>
         public static bool IsCompatible(string path)
         {
+            Console.WriteLine(GetFileVersion(path).Major + " " + CurrentVersion.Major);
             return GetFileVersion(path).Major <= CurrentVersion.Major;
         }
 
